@@ -1033,7 +1033,7 @@ footer {
   color: var(--muted);
   line-height: 1.4;
 }
-.footer-right { display: flex; gap: 32px; }
+.footer-right { display: flex; align-items: center; gap: 32px; }
 .footer-right a {
   font-size: 13px;
   color: var(--muted);

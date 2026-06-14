@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import GithubIcon from '@/components/GithubIcon'
 
 export default function Nav() {
   const [open, setOpen] = useState(false)
@@ -14,13 +15,13 @@ export default function Nav() {
     <nav>
       <div className="wrap">
         <a href="/" className="nav-logo">
-          <img src="/icon-white.svg" alt="Modelplane" height={32} />
+          <img src="/icon-color.svg" alt="Modelplane" height={32} />
         </a>
 
         <ul className="nav-links">
           <li><a href="#">Docs</a></li>
           <li><a href="/blog">Blog</a></li>
-          <li><a href="https://github.com/modelplaneai" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="https://github.com/modelplaneai" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><GithubIcon /></a></li>
           <li><a href="#" className="nav-cta">Get started →</a></li>
         </ul>
 
@@ -37,7 +38,7 @@ export default function Nav() {
         <div className="nav-dropdown">
           <a href="#" onClick={() => setOpen(false)}>Docs</a>
           <a href="/blog" onClick={() => setOpen(false)}>Blog</a>
-          <a href="https://github.com/modelplaneai" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>GitHub</a>
+          <a href="https://github.com/modelplaneai" target="_blank" rel="noopener noreferrer" aria-label="GitHub" onClick={() => setOpen(false)}><GithubIcon /></a>
           <a href="#" className="nav-cta-mobile" onClick={() => setOpen(false)}>Get started →</a>
         </div>
       )}
