@@ -1,0 +1,26 @@
+name: Blog check
+
+# Validates blog post frontmatter and runs a full build on PRs that touch blog
+# content or the website code, so broken MDX or missing fields are caught before merge.
+on:
+  pull_request:
+    paths:
+      - 'content/blog/**'
+      - 'pages/blog/**'
+      - 'src/**'
+      - 'package.json'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Validate frontmatter
+        run: node scripts/validate-posts.mjs
+      - name: Build
+        run: npm run build
