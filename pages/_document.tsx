@@ -18,6 +18,7 @@ export default function Document() {
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="icon" href="/icon.png" type="image/png" />
         <link rel="apple-touch-icon" href="/icon.png" />
+        <link rel="alternate" type="application/rss+xml" title="Modelplane Blog" href="/feed.xml" />
       </Head>
       <body>
         <Main />

@@ -1,0 +1,32 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The idle GPU detective">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="675" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#070714"/>
+      <stop offset="1" stop-color="#0f0f22"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop stop-color="#AD7BFC"/>
+      <stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <path d="M60 0H0V60" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <rect width="1200" height="675" fill="url(#grid)"/>
+  <circle cx="600" cy="300" r="240" fill="url(#accent)" opacity="0.10"/>
+
+  <!-- magnifying glass over a GPU -->
+  <g transform="translate(600 200)">
+    <rect x="-58" y="-26" width="84" height="52" rx="8" fill="#0d0d1f" stroke="#8b8aae" stroke-width="2"/>
+    <rect x="-48" y="-16" width="20" height="32" rx="3" fill="#22d3ee" opacity="0.5"/>
+    <rect x="-22" y="-16" width="20" height="32" rx="3" fill="#AD7BFC" opacity="0.5"/>
+    <circle cx="34" cy="2" r="34" fill="none" stroke="url(#accent)" stroke-width="6"/>
+    <line x1="58" y1="26" x2="86" y2="54" stroke="url(#accent)" stroke-width="8" stroke-linecap="round"/>
+    <text x="34" y="10" text-anchor="middle" font-family="DM Mono, monospace" font-size="20" fill="#34d399">0%</text>
+  </g>
+
+  <text x="600" y="360" text-anchor="middle" font-family="Inter, sans-serif" font-size="58" font-weight="800" fill="#ffffff" letter-spacing="-1.5">The Idle GPU</text>
+  <text x="600" y="426" text-anchor="middle" font-family="Inter, sans-serif" font-size="58" font-weight="800" fill="url(#accent)" letter-spacing="-1.5">Detective</text>
+  <text x="600" y="486" text-anchor="middle" font-family="DM Mono, monospace" font-size="20" fill="#8b8aae">a field guide to wasted accelerators</text>
+</svg>
