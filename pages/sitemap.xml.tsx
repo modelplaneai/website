@@ -16,6 +16,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
 
   const entries = [
     urlEntry(`${SITE_URL}/`),
+    urlEntry(`${SITE_URL}/manifesto`),
     urlEntry(`${SITE_URL}/blog`),
     ...posts.map((p) =>
       urlEntry(`${SITE_URL}/blog/${p.slug}`, new Date(p.date).toISOString())

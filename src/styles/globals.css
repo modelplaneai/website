@@ -1318,6 +1318,9 @@ a.post-tag:hover { border-color: var(--border-hi); color: var(--text); }
 .prose th, .prose td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
 .prose th { background: var(--bg-card); color: var(--text); font-weight: 600; }
 
+/* Manifesto signature */
+.prose .manifesto-sign { margin-top: 2em; color: var(--text); font-weight: 600; }
+
 /* Figures: images, video, embeds */
 .prose-figure { margin: 1.8em 0; text-align: center; }
 .prose-figure img, .prose-video {
