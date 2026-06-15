@@ -19,7 +19,7 @@ export default function Nav() {
         </a>
 
         <ul className="nav-links">
-          <li><a href="#">Docs</a></li>
+          <li><a href="/docs">Docs</a></li>
           <li><a href="/blog">Blog</a></li>
           <li><a href="https://github.com/modelplaneai" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><GithubIcon /></a></li>
           <li><a href="#" className="nav-cta">Get started →</a></li>
@@ -36,7 +36,7 @@ export default function Nav() {
 
       {open && (
         <div className="nav-dropdown">
-          <a href="#" onClick={() => setOpen(false)}>Docs</a>
+          <a href="/docs" onClick={() => setOpen(false)}>Docs</a>
           <a href="/blog" onClick={() => setOpen(false)}>Blog</a>
           <a href="https://github.com/modelplaneai" target="_blank" rel="noopener noreferrer" aria-label="GitHub" onClick={() => setOpen(false)}><GithubIcon /></a>
           <a href="#" className="nav-cta-mobile" onClick={() => setOpen(false)}>Get started →</a>

@@ -12,7 +12,7 @@ export default function Footer() {
             <span className="footer-tagline">Open source control plane for AI models</span>
           </div>
           <div className="footer-right">
-            <a href="#">Docs</a>
+            <a href="/docs">Docs</a>
             <a href="/blog">Blog</a>
             <a href="https://github.com/modelplaneai" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><GithubIcon /></a>
           </div>
