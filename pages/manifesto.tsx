@@ -27,7 +27,7 @@ export default function Manifesto() {
       <Nav />
       <main className="blog-main">
         <div className="wrap">
-          <header className="post-header">
+          <header className="manifesto-header">
             <p className="section-label">Manifesto</p>
             <h1 className="post-title">{TITLE}</h1>
           </header>

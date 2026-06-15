@@ -1318,7 +1318,9 @@ a.post-tag:hover { border-color: var(--border-hi); color: var(--text); }
 .prose th, .prose td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; }
 .prose th { background: var(--bg-card); color: var(--text); font-weight: 600; }
 
-/* Manifesto signature */
+/* Manifesto: header shares the prose column so title and body align */
+.manifesto-header { max-width: 680px; margin: 0 auto 36px; }
+.manifesto-header .post-title { margin-top: 12px; }
 .prose .manifesto-sign { margin-top: 2em; color: var(--text); font-weight: 600; }
 
 /* Figures: images, video, embeds */
