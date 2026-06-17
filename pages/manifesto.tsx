@@ -5,7 +5,7 @@ import { SITE_URL } from '@/lib/site'
 
 const TITLE = 'Intelligence belongs to everyone'
 const DESCRIPTION =
-  'Intelligence should belong to everyone. Why we are building Modelplane in the open as a neutral control plane for the open intelligence ecosystem.'
+  'Intelligence should belong to everyone. Why we are building Modelplane in the open as a neutral control plane for the intelligence ecosystem.'
 
 export default function Manifesto() {
   const url = `${SITE_URL}/manifesto`
@@ -56,12 +56,12 @@ export default function Manifesto() {
                 Open-weight models are changing that trajectory. Once frontier-quality
                 models could be downloaded and run by anyone, intelligence stopped being a
                 product sold by a few and started becoming an ecosystem built by many.
-                Models, inference engines, gateways, serving systems, accelerators, and
-                clouds, are now evolving independently, each advancing faster than any one
-                company could move alone. No vendor can own every breakthrough across an
-                ecosystem this broad and fast-moving. For the first time, people can choose
-                the best pieces for their needs while keeping control of the intelligence
-                they depend on.
+                Models, inference engines, serving systems, clouds, and accelerators are
+                now evolving independently, each advancing faster than any one company
+                could move alone. No vendor can own every breakthrough across an ecosystem
+                this broad and fast-moving. We are entering a stage where people can choose
+                the best pieces for their needs and keep control of the intelligence they
+                depend on.
               </p>
               <p>
                 But choice without coordination can become fragmentation. As the ecosystem
@@ -69,14 +69,14 @@ export default function Manifesto() {
                 across many environments, providers, and technologies, and the burden of
                 holding it all together becomes the limiting factor. Every important
                 horizontal ecosystem eventually develops a neutral control layer that
-                allows independent parts to function as a coherent whole. Open intelligence
-                is beginning to need the same thing.
+                allows independent parts to function as a coherent whole. The intelligence
+                ecosystem is beginning to need the same thing.
               </p>
               <p>
                 That is why we are building Modelplane in the open. Modelplane is a control
-                plane designed to bring together the models, engines, gateways, schedulers,
-                clouds, and accelerators that make up the open intelligence ecosystem and
-                help operate them as a single system under your control. We intend to donate
+                plane designed to bring together the models, engines, clouds, and
+                accelerators that make up the intelligence ecosystem and help operate them
+                as a single system under your control. We intend to donate
                 Modelplane to a neutral open source foundation this year, ensuring that it
                 belongs to the ecosystem it serves.
               </p>
