@@ -783,19 +783,79 @@ hr.divider {
 .infra-section { background: var(--bg-mid); }
 
 /* ── ECOSYSTEM LANDSCAPE ── */
+.eco-stack { margin-top: 36px; }
+
+/* Modelplane control-plane bar, sitting on top of the ecosystem */
+.eco-mp {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 16px 22px;
+  border: 1px solid var(--border-hi);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(195,158,253,0.13), rgba(34,211,238,0.04));
+  box-shadow: 0 0 0 1px rgba(195,158,253,0.07), 0 12px 44px -16px rgba(195,158,253,0.45);
+}
+.eco-mp-id { display: flex; align-items: center; gap: 14px; }
+.eco-mp-logo { height: 22px; width: auto; opacity: 0.95; }
+.eco-mp-caps { display: flex; flex-wrap: wrap; gap: 6px; }
+.eco-mp-caps span {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--muted-hi);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 9px;
+}
+
+.eco-orchestrates {
+  position: relative;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+  padding: 14px 0 12px;
+}
+.eco-orchestrates::before,
+.eco-orchestrates::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 36%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-hi), transparent);
+}
+.eco-orchestrates::before { left: 0; }
+.eco-orchestrates::after { right: 0; }
+
 .eco {
-  margin-top: 36px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
+}
+.eco-layer-head { display: flex; flex-direction: column; gap: 4px; padding-top: 2px; }
+.eco-layer-caption {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  color: var(--muted);
+  margin: 0;
 }
 .eco-layer {
   display: grid;
   grid-template-columns: 180px 1fr;
   gap: 24px;
   padding: 24px 28px;
-  align-items: start;
+  align-items: center;
   border-left: 3px solid var(--border);
 }
 .eco-layer + .eco-layer { border-top: 1px solid var(--border); }
