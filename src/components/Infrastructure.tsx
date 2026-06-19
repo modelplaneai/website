@@ -1,137 +1,87 @@
-/* Compatibility — the inference ecosystem as a three-layer stack. Models on top, the
-   serving stack in the middle, infrastructure + providers underneath. Each layer has
-   sub-groups of the projects/vendors Modelplane composes. */
+/* The inference ecosystem, simplified to its role: Modelplane is the control plane
+   that sits above the stack and orchestrates it. One control-plane bar on top, then
+   the open ecosystem in slim layers below: models, serving engines, accelerators, and
+   providers. Representative pieces per layer (sorted by adoption), not an exhaustive
+   matrix. Pills are static, no outbound links. */
 
-type Item = { name: string; logo: string | null; hideLabel?: boolean; href?: string }
+type Item = { name: string; logo: string | null }
+type Row = { label?: string; items: Item[]; more?: string }
+type Layer = { name: string; caption: string; accent: string; rows: Row[] }
 
+// Each list is ordered left-to-right by adoption / popularity.
 const models: Item[] = [
-  { name: 'Llama',    logo: '/logos/meta.svg',        href: 'https://huggingface.co/meta-llama' },
-  { name: 'Qwen',     logo: '/logos/alibaba.svg',     href: 'https://huggingface.co/Qwen' },
-  { name: 'Mistral',  logo: '/logos/mistralai.svg',   href: 'https://huggingface.co/mistralai' },
-  { name: 'Gemma',    logo: '/logos/googlecloud.svg', href: 'https://huggingface.co/google' },
-  { name: 'DeepSeek', logo: '/logos/deepseek.svg', href: 'https://huggingface.co/deepseek-ai' },
-  { name: 'Phi',      logo: '/logos/microsoft.svg',   href: 'https://huggingface.co/microsoft' },
-  { name: 'Falcon',   logo: '/logos/huggingface.svg', href: 'https://huggingface.co/tiiuae' },
-  { name: 'Kimi K',   logo: '/logos/moonshot.svg',    href: 'https://huggingface.co/moonshotai' },
-  { name: 'Nemotron', logo: '/logos/nvidia.svg',      href: 'https://huggingface.co/nvidia' },
-  { name: 'MiniMax',  logo: '/logos/minimax.svg',     href: 'https://huggingface.co/MiniMaxAI' },
-  { name: 'gpt-oss',  logo: '/logos/openai.svg',      href: 'https://huggingface.co/openai' },
+  { name: 'Llama',    logo: '/logos/meta.svg' },
+  { name: 'Qwen',     logo: '/logos/alibaba.svg' },
+  { name: 'DeepSeek', logo: '/logos/deepseek.svg' },
+  { name: 'Mistral',  logo: '/logos/mistralai.svg' },
+  { name: 'gpt-oss',  logo: '/logos/openai.svg' },
+  { name: 'Gemma',    logo: '/logos/googlecloud.svg' },
 ]
 
 const engines: Item[] = [
-  { name: 'vLLM',         logo: '/logos/vllm.svg',        href: 'https://github.com/vllm-project/vllm' },
-  { name: 'SGLang',       logo: null,                     href: 'https://github.com/sgl-project/sglang' },
-  { name: 'TensorRT-LLM', logo: '/logos/nvidia.svg',      href: 'https://github.com/NVIDIA/TensorRT-LLM' },
-  { name: 'TGI',          logo: '/logos/huggingface.svg', href: 'https://github.com/huggingface/text-generation-inference' },
-  { name: 'LMDeploy',     logo: null,                     href: 'https://github.com/InternLM/lmdeploy' },
-  { name: 'llama.cpp',    logo: null,                     href: 'https://github.com/ggml-org/llama.cpp' },
-]
-
-const backends: Item[] = [
-  { name: 'LeaderWorkerSet', logo: '/logos/kubernetes.svg', href: 'https://github.com/kubernetes-sigs/lws' },
-  { name: 'llm-d',           logo: null,                    href: 'https://llm-d.ai' },
-  { name: 'Dynamo',          logo: '/logos/nvidia.svg',     href: 'https://github.com/ai-dynamo/dynamo' },
-  { name: 'Grove',           logo: '/logos/nvidia.svg',     href: 'https://github.com/ai-dynamo/grove' },
-]
-
-const routing: Item[] = [
-  { name: 'Gateway API',   logo: '/logos/kubernetes.svg', href: 'https://gateway-api.sigs.k8s.io' },
-  { name: 'Envoy Gateway', logo: '/logos/envoy.svg',      href: 'https://gateway.envoyproxy.io' },
-  { name: 'Traefik',       logo: '/logos/traefik.svg',    href: 'https://traefik.io' },
-  { name: 'GAIE',          logo: null,                    href: 'https://github.com/kubernetes-sigs/gateway-api-inference-extension' },
-  { name: 'Istio',         logo: '/logos/istio.svg',      href: 'https://istio.io' },
-]
-
-const schedulers: Item[] = [
-  { name: 'Kubernetes + DRA', logo: '/logos/kubernetes.svg', href: 'https://kubernetes.io/docs/concepts/scheduling-eviction/dynamic-resource-allocation/' },
-  { name: 'KAI',              logo: '/logos/nvidia.svg',     href: 'https://github.com/NVIDIA/KAI-Scheduler' },
-  { name: 'Kueue',            logo: null,                    href: 'https://kueue.sigs.k8s.io' },
-  { name: 'Volcano',          logo: null,                    href: 'https://volcano.sh' },
-  { name: 'Grove',            logo: '/logos/nvidia.svg',     href: 'https://github.com/ai-dynamo/grove' },
+  { name: 'vLLM',         logo: '/logos/vllm.svg' },
+  { name: 'SGLang',       logo: null },
+  { name: 'TensorRT-LLM', logo: '/logos/nvidia.svg' },
+  { name: 'TGI',          logo: '/logos/huggingface.svg' },
+  { name: 'llama.cpp',    logo: null },
+  { name: 'LMDeploy',     logo: null },
 ]
 
 const accelerators: Item[] = [
-  { name: 'NVIDIA',       logo: '/logos/nvidia.svg',      href: 'https://www.nvidia.com' },
-  { name: 'AMD',          logo: '/logos/amd.svg',         href: 'https://www.amd.com' },
-  { name: 'Google TPU',   logo: '/logos/googlecloud.svg', href: 'https://cloud.google.com/tpu' },
-  { name: 'AWS Trainium', logo: '/logos/amazonaws.svg',   href: 'https://aws.amazon.com/ai/machine-learning/trainium/' },
-  { name: 'Intel Gaudi',  logo: '/logos/intel.svg',       href: 'https://www.intel.com/content/www/us/en/products/details/processors/ai-accelerators/gaudi.html' },
+  { name: 'NVIDIA',       logo: '/logos/nvidia.svg' },
+  { name: 'AMD',          logo: '/logos/amd.svg' },
+  { name: 'Google TPU',   logo: '/logos/googlecloud.svg' },
+  { name: 'AWS Trainium', logo: '/logos/amazonaws.svg' },
+  { name: 'Intel Gaudi',  logo: '/logos/intel.svg' },
 ]
 
-const cloud: Item[] = [
-  { name: 'AWS',    logo: '/logos/amazonaws.svg',      href: 'https://aws.amazon.com' },
-  { name: 'GCP',    logo: '/logos/googlecloud.svg',    href: 'https://cloud.google.com' },
-  { name: 'Azure',  logo: '/logos/microsoftazure.svg', href: 'https://azure.microsoft.com' },
-  { name: 'Oracle', logo: '/logos/oracle.svg',         href: 'https://www.oracle.com/cloud' },
+const providers: Item[] = [
+  { name: 'AWS',       logo: '/logos/amazonaws.svg' },
+  { name: 'GCP',       logo: '/logos/googlecloud.svg' },
+  { name: 'Azure',     logo: '/logos/microsoftazure.svg' },
+  { name: 'CoreWeave', logo: '/logos/coreweave.svg' },
+  { name: 'Lambda',    logo: '/logos/lambda.svg' },
+  { name: 'on-prem',   logo: null },
 ]
 
-const neoclouds: Item[] = [
-  { name: 'CoreWeave',  logo: '/logos/coreweave.svg', href: 'https://www.coreweave.com' },
-  { name: 'Lambda',     logo: '/logos/lambda.svg',    href: 'https://lambda.ai/kubernetes' },
-  { name: 'Nebius',     logo: null,                   href: 'https://nebius.com' },
-  { name: 'Vultr',      logo: '/logos/vultr.svg',     href: 'https://www.vultr.com/kubernetes' },
-  { name: 'Crusoe',     logo: null,                   href: 'https://www.crusoe.ai' },
-  { name: 'Paperspace', logo: '/logos/paperspace.svg', href: 'https://www.paperspace.com' },
-]
-
-const onprem: Item[] = [
-  { name: 'on-prem', logo: null },
-]
-
-const managed: Item[] = [
-  { name: 'Together',  logo: null,                   href: 'https://www.together.ai' },
-  { name: 'Baseten',   logo: null,                   href: 'https://www.baseten.co' },
-  { name: 'Fireworks', logo: null,                   href: 'https://fireworks.ai' },
-  { name: 'Replicate', logo: '/logos/replicate.svg', href: 'https://replicate.com' },
-  { name: 'Modal',     logo: '/logos/modal.svg',     href: 'https://modal.com' },
-]
-
-type Sub = { label: string; items: Item[]; more?: string }
-const layers: { name: string; accent: string; subs: Sub[] }[] = [
+const layers: Layer[] = [
   {
     name: 'Models',
+    caption: 'open weights & custom',
     accent: '#f472b6',
-    subs: [{ label: 'Open weights & custom', items: models, more: '+ any open-weight or custom model' }],
+    rows: [{ items: models, more: '+ any open-weight model' }],
   },
   {
     name: 'Serving',
+    caption: 'inference engines',
     accent: 'var(--purple-hi)',
-    subs: [
-      { label: 'Engines', items: engines, more: '+ any engine container' },
-      { label: 'Multi-node backends', items: backends },
-      { label: 'Routing', items: routing },
-      { label: 'Schedulers', items: schedulers },
-    ],
+    rows: [{ items: engines, more: '+ any engine' }],
   },
   {
-    name: 'Infrastructure & providers',
+    name: 'Infrastructure',
+    caption: 'accelerators & providers',
     accent: 'var(--cyan)',
-    subs: [
+    rows: [
       { label: 'Accelerators', items: accelerators, more: '+ any accelerator' },
-      { label: 'Cloud', items: cloud },
-      { label: 'Neoclouds', items: neoclouds },
-      { label: 'On-prem & BYO', items: onprem, more: '+ any Kubernetes' },
-      { label: 'Managed inference', items: managed, more: '+ any OpenAI-compatible endpoint' },
+      { label: 'Providers',    items: providers,    more: '+ any Kubernetes' },
     ],
   },
 ]
 
-function LogoPill({ name, logo, hideLabel, href }: Item) {
-  const inner = (
-    <>
+const capabilities = ['composes', 'provisions', 'schedules', 'autoscales', 'routes', 'caches']
+
+function LogoPill({ name, logo }: Item) {
+  return (
+    <span className="infra-pill infra-pill--static">
       {logo
         ? <img src={logo} alt={name} className="infra-pill-logo" />
-        : <span className="infra-pill-initial">{name[0]}</span>
-      }
-      {!hideLabel && name}
-    </>
+        : <span className="infra-pill-initial">{name[0]}</span>}
+      {name}
+    </span>
   )
-  return href
-    ? <a className="infra-pill" href={href} target="_blank" rel="noopener noreferrer">{inner}</a>
-    : <span className="infra-pill infra-pill--static">{inner}</span>
 }
 
-function Pills({ items, more }: { items: Item[]; more?: string }) {
+function Pills({ items, more }: Row) {
   return (
     <div className="eco-pills">
       {items.map(i => <LogoPill key={i.name} {...i} />)}
@@ -146,26 +96,43 @@ export default function Infrastructure() {
       <div className="wrap">
         <h2 className="section-title reveal">The inference ecosystem. <span className="grad">Under one control plane.</span></h2>
         <p className="section-body section-body--wide reveal">
-          Modelplane doesn&rsquo;t replace the inference ecosystem; it orchestrates it across three
-          layers: the models you run, the serving stack that runs them, and the infrastructure,
-          accelerators, and providers underneath. It composes what your teams already choose, and
-          integrates new pieces as they emerge.
+          Any model, any engine, any infrastructure. Modelplane doesn&rsquo;t replace the inference
+          ecosystem; it sits above the pieces your teams already choose and composes them into a
+          running, self-reconciling fleet.
         </p>
 
-        <div className="eco reveal">
-          {layers.map(layer => (
-            <div key={layer.name} className="eco-layer" style={{ borderLeftColor: layer.accent }}>
-              <p className="eco-layer-label" style={{ color: layer.accent }}>{layer.name}</p>
-              <div className="eco-layer-body">
-                {layer.subs.map(sub => (
-                  <div key={sub.label} className="eco-sub">
-                    <p className="eco-sub-label">{sub.label}</p>
-                    <Pills items={sub.items} more={sub.more} />
-                  </div>
-                ))}
-              </div>
+        <div className="eco-stack reveal">
+          {/* Modelplane: the control plane, on top */}
+          <div className="eco-mp">
+            <div className="eco-mp-id">
+              <img src="/logo-inverted.svg" className="eco-mp-logo" alt="Modelplane" />
             </div>
-          ))}
+            <div className="eco-mp-caps">
+              {capabilities.map(c => <span key={c}>{c}</span>)}
+            </div>
+          </div>
+
+          <p className="eco-orchestrates">orchestrates</p>
+
+          {/* The open ecosystem, in layers below */}
+          <div className="eco">
+            {layers.map(layer => (
+              <div key={layer.name} className="eco-layer" style={{ borderLeftColor: layer.accent }}>
+                <div className="eco-layer-head">
+                  <p className="eco-layer-label" style={{ color: layer.accent }}>{layer.name}</p>
+                  <p className="eco-layer-caption">{layer.caption}</p>
+                </div>
+                <div className="eco-layer-body">
+                  {layer.rows.map((row, i) => (
+                    <div key={row.label ?? i} className="eco-sub">
+                      {row.label && <p className="eco-sub-label">{row.label}</p>}
+                      <Pills {...row} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
