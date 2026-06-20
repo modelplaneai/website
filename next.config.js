@@ -1,24 +1,15 @@
 /** @type {import('next').NextConfig} */
 
-// The docs are a separate Hugo project (the `modelplane-docs` Vercel project)
-// served under /docs on this domain for SEO. We proxy /docs/* to that
-// deployment with a rewrite. Hugo's baseURL only prefixes the URLs *inside*
-// its HTML — the files themselves are emitted at the deployment root
-// (/concepts/, /scss/, /js/, …), so we strip the /docs prefix when proxying.
-//
-// The origin is configured via DOCS_ORIGIN (set in this project's Vercel
-// environment) rather than hardcoded, because the docs project's stable
-// production alias isn't fixed here. When it's unset (e.g. local dev), we skip
-// the rewrite so the build never breaks and /docs simply isn't proxied.
-const DOCS_ORIGIN = process.env.DOCS_ORIGIN?.replace(/\/$/, '')
-
+// The docs are a standalone Hugo site at docs.modelplane.ai (the `modelplane-docs`
+// Vercel project). We 301-redirect the legacy /docs and /docs/* paths there so old
+// links and any indexed URLs keep working and their SEO equity transfers to the
+// subdomain.
 const nextConfig = {
   reactStrictMode: true,
-  async rewrites() {
-    if (!DOCS_ORIGIN) return []
+  async redirects() {
     return [
-      { source: '/docs', destination: `${DOCS_ORIGIN}/` },
-      { source: '/docs/:path*', destination: `${DOCS_ORIGIN}/:path*` },
+      { source: '/docs', destination: 'https://docs.modelplane.ai/', statusCode: 301 },
+      { source: '/docs/:path*', destination: 'https://docs.modelplane.ai/:path*', statusCode: 301 },
     ]
   },
 }
