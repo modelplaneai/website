@@ -2,4 +2,3 @@ User-agent: *
 Allow: /
 
 Sitemap: https://modelplane.ai/sitemap.xml
-Sitemap: https://modelplane.ai/docs/sitemap.xml
