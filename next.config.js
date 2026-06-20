@@ -10,6 +10,8 @@ const nextConfig = {
     return [
       { source: '/docs', destination: 'https://docs.modelplane.ai/', statusCode: 301 },
       { source: '/docs/:path*', destination: 'https://docs.modelplane.ai/:path*', statusCode: 301 },
+      // The pre-launch preview lived at /preview; it is now the home page.
+      { source: '/preview', destination: '/', statusCode: 301 },
     ]
   },
 }

@@ -1,34 +1,56 @@
 import Head from 'next/head'
+import { useEffect } from 'react'
+import Nav from '@/components/Nav'
+import Hero from '@/components/Hero'
+import Capabilities from '@/components/Capabilities'
+import Infrastructure from '@/components/Infrastructure'
+import Topologies from '@/components/Topologies'
+import HowItWorks from '@/components/HowItWorks'
+import OpenSource from '@/components/OpenSource'
+import Partners from '@/components/Partners'
+import Footer from '@/components/Footer'
 
-export default function Teaser() {
+export default function Home() {
+  // Set up scroll-reveal observer (mirrors the original HTML script)
+  useEffect(() => {
+    const reveals = document.querySelectorAll('.reveal')
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('visible')
+            }, 80)
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    )
+    reveals.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
+
   return (
     <>
       <Head>
-        <title>Modelplane</title>
+        <title>Modelplane · The open source control plane for AI inference</title>
       </Head>
-      <div style={{
-        minHeight: '100vh',
-        background: 'var(--bg)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '32px',
-      }}>
-        <img src="/logo-inverted.svg" alt="Modelplane" style={{ height: '72px', maxWidth: '80vw', objectFit: 'contain' }} />
-        <p style={{
-          fontFamily: 'var(--mono)',
-          fontSize: '11px',
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          color: 'var(--muted)',
-        }}>
-          Coming soon
-        </p>
-        <a href="/preview" className="btn-primary" style={{ marginTop: '16px', fontSize: '13px', padding: '8px 20px' }}>
-          Preview →
-        </a>
-      </div>
+      <Nav />
+      <Hero />
+      <hr className="divider" />
+      <Partners />
+      <hr className="divider" />
+      <Infrastructure />
+      <hr className="divider" />
+      <Topologies />
+      <hr className="divider" />
+      <HowItWorks />
+      <hr className="divider" />
+      <Capabilities />
+      <hr className="divider" />
+      <OpenSource />
+      <Footer />
     </>
   )
 }
