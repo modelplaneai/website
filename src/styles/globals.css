@@ -1220,6 +1220,15 @@ footer {
 }
 .footer-by a { color: #4a4a68; text-decoration: none; }
 .footer-by a:hover { color: var(--muted); }
+.footer-legal {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--muted);
+}
+.footer-legal a { color: var(--muted); text-decoration: underline; transition: color 0.2s; }
+.footer-legal a:hover { color: var(--text); }
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
