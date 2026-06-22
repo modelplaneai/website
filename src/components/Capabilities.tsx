@@ -34,7 +34,7 @@ const inputPill: CSSProperties = {
 
 // 01 — Provisioning: provision (GKE/EKS) OR bring your own → one InferenceCluster + stack
 function DiagramProvisioning() {
-  const stack = ['GPU operator & drivers', 'Serving engines', 'Inference gateway']
+  const stack = ['GPU operator & drivers', 'Serving engines']
   return (
     <div className="cap-diagram-box">
       <p className="cap-diagram-label">Provisioning</p>
@@ -48,7 +48,7 @@ function DiagramProvisioning() {
           <span style={{ fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--purple-hi)' }}>InferenceCluster</span>
           <span style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--green)' }}>● reconciled</span>
         </div>
-        <p style={{ fontFamily: 'var(--mono)', fontSize: '9px', color: 'var(--muted)', marginBottom: '8px' }}>classes: h200-8x, h100-8x · node pools · gateway</p>
+        <p style={{ fontFamily: 'var(--mono)', fontSize: '9px', color: 'var(--muted)', marginBottom: '8px' }}>classes: h200-8x, h100-8x · node pools</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {stack.map(s => (
             <p key={s} style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--muted)' }}>
@@ -97,7 +97,7 @@ function DiagramScheduling() {
         <span className="cap-flow-arrow">→</span>
         <div style={flowCard}>
           <p style={tinyLabel}>cluster scheduler</p>
-          <p style={{ ...mono(9, 'var(--muted)'), marginBottom: '8px', lineHeight: 1.5 }}>DRA · KAI / Kueue / Volcano</p>
+          <p style={{ ...mono(9, 'var(--muted)'), marginBottom: '8px', lineHeight: 1.5 }}>DRA</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Unit n={4} />
             <span style={mono(9, 'var(--green)')}>bound</span>
@@ -227,12 +227,12 @@ const capabilities: Capability[] = [
   {
     label: '01 / Provisioning',
     title: 'Provision the fleet, or bring your own',
-    body: "Provision inference clusters on AWS, GCP, and Azure, or bring your own on any Kubernetes. Each gets hardware classes, node pools, an inference gateway, and the full serving stack, installed and continuously reconciled.",
+    body: "Provision inference clusters on AWS, GCP, and Azure, or bring your own on any Kubernetes. Each gets hardware classes, node pools, and the full serving stack, installed and continuously reconciled, all fronted by one central inference gateway.",
   },
   {
     label: '02 / Scheduling',
     title: 'One global pool of capacity',
-    body: "Modelplane treats every cluster, cloud, and region as one global pool. A fleet scheduler places each model's replicas where its requirements match a cluster's capabilities, then hands off to the cluster's own scheduler and DRA, with support for advanced schedulers like KAI, Kueue, and Volcano.",
+    body: "Modelplane treats every cluster, cloud, and region as one global pool. A fleet scheduler places each model's replicas where its requirements match a cluster's capabilities, then hands off to the cluster's own scheduler and DRA.",
   },
   {
     label: '03 / Autoscaling',
@@ -244,13 +244,6 @@ const capabilities: Capability[] = [
     label: '04 / Routing',
     title: 'One service, many replicas and endpoints',
     body: "A model service is one stable, OpenAI-compatible endpoint over many replicas and model endpoints. Weighted routing spreads traffic across replicas for canary and A/B rollouts, and a managed endpoint can take a weighted share too.",
-    roadmap: "Automatic cross-cloud failover is on the roadmap.",
-  },
-  {
-    label: '05 / Platform native',
-    title: 'The tools your team already knows',
-    body: "Platform teams operate Modelplane with the primitives they already own — Kubernetes APIs, GitOps workflows, Crossplane, Prometheus metrics, and RBAC. Declare inference clusters as code, manage them with ArgoCD or Flux, observe the fleet with your existing monitoring stack. No new control plane to learn. No separate operational model. Inference becomes just another workload your platform owns and governs.",
-    noDiagram: true,
   },
 ]
 

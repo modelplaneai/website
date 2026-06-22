@@ -105,7 +105,7 @@ export default function Hero() {
               <span className="hero-gradient">AI inference</span>
             </h1>
             <p className="herox-sub">
-              Modelplane is the control plane above your inference clusters across cloud, neocloud, and on-premise. Platform teams set policy and capacity; developers declare a model and get a serving endpoint. Modelplane continuously reconciles the whole fleet: provisioning, scheduling, autoscaling, routing, and caching. All of it runs entirely under your control.
+              Install Modelplane in your own environment, and it operates your GPU clusters across cloud, neocloud, and on-premise as one inference fleet: provisioning clusters, placing models, autoscaling replicas, caching weights, and routing through a single OpenAI-compatible endpoint. It runs any model on any serving engine on any infrastructure, all under your control.
             </p>
             <div className="herox-actions">
               <a href="https://docs.modelplane.ai/getting-started/" className="btn-primary">Get started →</a>
