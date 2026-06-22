@@ -59,11 +59,11 @@ const layers: Layer[] = [
   },
   {
     name: 'Infrastructure',
-    caption: 'accelerators & providers',
+    caption: 'providers & accelerators',
     accent: 'var(--cyan)',
     rows: [
-      { label: 'Accelerators', items: accelerators, more: '+ any accelerator' },
       { label: 'Providers',    items: providers,    more: '+ any Kubernetes' },
+      { label: 'Accelerators', items: accelerators, more: '+ any accelerator' },
     ],
   },
 ]
