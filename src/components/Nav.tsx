@@ -52,10 +52,10 @@ export default function Nav() {
           <li><a href="https://docs.modelplane.ai">Docs</a></li>
           <li><a href="/blog">Blog</a></li>
           <li><a href="/manifesto">Manifesto</a></li>
-          <li><a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub"><GithubIcon /></a></li>
           <li><a href={SLACK_URL} target="_blank" rel="noopener noreferrer">Slack</a></li>
-          <li><a href="https://docs.modelplane.ai/getting-started/" className="nav-cta">Get started →</a></li>
+          <li><a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub"><GithubIcon /></a></li>
           <li><a href={GITHUB_URL} className="nav-cta-ghost" target="_blank" rel="noopener noreferrer">★ Star the Project</a></li>
+          <li><a href="https://docs.modelplane.ai/getting-started/" className="nav-cta">Get started →</a></li>
         </ul>
 
         <button
@@ -72,10 +72,10 @@ export default function Nav() {
           <a href="https://docs.modelplane.ai" onClick={() => setOpen(false)}>Docs</a>
           <a href="/blog" onClick={() => setOpen(false)}>Blog</a>
           <a href="/manifesto" onClick={() => setOpen(false)}>Manifesto</a>
-          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub" onClick={() => setOpen(false)}><GithubIcon /></a>
           <a href={SLACK_URL} target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>Slack</a>
-          <a href="https://docs.modelplane.ai/getting-started/" className="nav-cta-mobile" onClick={() => setOpen(false)}>Get started →</a>
+          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" aria-label="GitHub" onClick={() => setOpen(false)}><GithubIcon /></a>
           <a href={GITHUB_URL} className="nav-cta-mobile" target="_blank" rel="noopener noreferrer" onClick={() => setOpen(false)}>★ Star the Project</a>
+          <a href="https://docs.modelplane.ai/getting-started/" className="nav-cta-mobile" onClick={() => setOpen(false)}>Get started →</a>
         </div>
       )}
     </nav>
