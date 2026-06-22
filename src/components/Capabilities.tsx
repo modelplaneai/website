@@ -215,7 +215,15 @@ function CapDiagram({ index }: { index: number }) {
   return <D />
 }
 
-const capabilities = [
+type Capability = {
+  label: string
+  title: string
+  body: string
+  roadmap?: string
+  noDiagram?: boolean
+}
+
+const capabilities: Capability[] = [
   {
     label: '01 / Provisioning',
     title: 'Provision the fleet, or bring your own',
@@ -238,6 +246,12 @@ const capabilities = [
     body: "A model service is one stable, OpenAI-compatible endpoint over many replicas and model endpoints. Weighted routing spreads traffic across replicas for canary and A/B rollouts, and a managed endpoint can take a weighted share too.",
     roadmap: "Automatic cross-cloud failover is on the roadmap.",
   },
+  {
+    label: '05 / Platform native',
+    title: 'The tools your team already knows',
+    body: "Platform teams operate Modelplane with the primitives they already own — Kubernetes APIs, GitOps workflows, Crossplane, Prometheus metrics, and RBAC. Declare inference clusters as code, manage them with ArgoCD or Flux, observe the fleet with your existing monitoring stack. No new control plane to learn. No separate operational model. Inference becomes just another workload your platform owns and governs.",
+    noDiagram: true,
+  },
 ]
 
 export default function Capabilities() {
@@ -250,7 +264,7 @@ export default function Capabilities() {
 
         <div className="cap-features">
           {capabilities.map((cap, i) => (
-            <div key={cap.label} className={`cap-feature reveal${i % 2 === 1 ? ' cap-feature--reverse' : ''}`}>
+            <div key={cap.label} className={`cap-feature reveal${i % 2 === 1 ? ' cap-feature--reverse' : ''}${cap.noDiagram ? ' cap-feature--full' : ''}`}>
               <div className="cap-feature-text">
                 <p className="cap-feature-label">{cap.label}</p>
                 <h3 className="cap-feature-title">{cap.title}</h3>
@@ -259,9 +273,11 @@ export default function Capabilities() {
                   <p className="cap-roadmap"><span className="cap-roadmap-tag">roadmap</span>{cap.roadmap}</p>
                 )}
               </div>
-              <div className="cap-feature-diagram">
-                <CapDiagram index={i} />
-              </div>
+              {!cap.noDiagram && (
+                <div className="cap-feature-diagram">
+                  <CapDiagram index={i} />
+                </div>
+              )}
             </div>
           ))}
         </div>

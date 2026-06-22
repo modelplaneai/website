@@ -96,9 +96,10 @@ export default function Infrastructure() {
       <div className="wrap">
         <h2 className="section-title reveal">The inference ecosystem. <span className="grad">Under one control plane.</span></h2>
         <p className="section-body section-body--wide reveal">
-          Any model, any engine, any infrastructure. Modelplane doesn&rsquo;t replace the inference
-          ecosystem; it sits above the pieces your teams already choose and composes them into a
-          running, self-reconciling fleet.
+          Modelplane doesn&rsquo;t replace the inference ecosystem, it orchestrates it across three
+          layers: the models you run, the engines that serve them, and the infrastructure underneath,
+          across accelerators and providers. It composes what your teams already choose and integrates
+          new pieces as they emerge.
         </p>
 
         <div className="eco-stack reveal">
