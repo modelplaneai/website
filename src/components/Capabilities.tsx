@@ -34,7 +34,7 @@ const inputPill: CSSProperties = {
 
 // 01 — Provisioning: provision (GKE/EKS) OR bring your own → one InferenceCluster + stack
 function DiagramProvisioning() {
-  const stack = ['GPU operator & drivers', 'Serving engines', 'Inference gateway']
+  const stack = ['GPU operator & drivers', 'Serving engines']
   return (
     <div className="cap-diagram-box">
       <p className="cap-diagram-label">Provisioning</p>
@@ -48,7 +48,7 @@ function DiagramProvisioning() {
           <span style={{ fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--purple-hi)' }}>InferenceCluster</span>
           <span style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--green)' }}>● reconciled</span>
         </div>
-        <p style={{ fontFamily: 'var(--mono)', fontSize: '9px', color: 'var(--muted)', marginBottom: '8px' }}>classes: h200-8x, h100-8x · node pools · gateway</p>
+        <p style={{ fontFamily: 'var(--mono)', fontSize: '9px', color: 'var(--muted)', marginBottom: '8px' }}>classes: h200-8x, h100-8x · node pools</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {stack.map(s => (
             <p key={s} style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--muted)' }}>
@@ -227,7 +227,7 @@ const capabilities: Capability[] = [
   {
     label: '01 / Provisioning',
     title: 'Provision the fleet, or bring your own',
-    body: "Provision inference clusters on AWS, GCP, and Azure, or bring your own on any Kubernetes. Each gets hardware classes, node pools, an inference gateway, and the full serving stack, installed and continuously reconciled.",
+    body: "Provision inference clusters on AWS, GCP, and Azure, or bring your own on any Kubernetes. Each gets hardware classes, node pools, and the full serving stack, installed and continuously reconciled, all fronted by one central inference gateway.",
   },
   {
     label: '02 / Scheduling',
