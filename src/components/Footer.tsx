@@ -17,6 +17,9 @@ export default function Footer() {
             <a href="https://github.com/modelplaneai" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><GithubIcon /></a>
           </div>
         </div>
+        <p className="footer-legal">
+          © 2026 The Modelplane Authors. Modelplane™ is a trademark.
+        </p>
       </div>
     </footer>
   )
