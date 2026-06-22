@@ -789,7 +789,7 @@ hr.divider {
 
 /* diagram box shared style */
 .cap-diagram-box {
-  background: var(--bg-card);
+  background: #001D2F;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 18px;
@@ -844,7 +844,7 @@ hr.divider {
   align-items: stretch;
 }
 .hiw-role {
-  background: var(--bg-card);
+  background: #001D2F;
   border: 1px solid var(--border-hi);
   border-radius: 16px;
   padding: 18px;
@@ -993,7 +993,7 @@ hr.divider {
 }
 .topo-card {
   display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px;
-  background: var(--bg-card);
+  background: #001D2F;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 22px 16px;
