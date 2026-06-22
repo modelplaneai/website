@@ -433,7 +433,7 @@ nav.nav--reveal { animation: navSlideIn 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
 }
 .arch-deploy {
   min-width: 0;
-  background: rgba(255,255,255,0.025);
+  background: #001D2F;
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 10px 10px;
@@ -441,7 +441,7 @@ nav.nav--reveal { animation: navSlideIn 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
 }
 .arch-deploy.is-active {
   border-color: rgba(154,94,252,0.6);
-  background: rgba(154,94,252,0.08);
+  background: linear-gradient(0deg, rgba(154,94,252,0.10), rgba(154,94,252,0.10)), #001D2F;
 }
 .arch-kind {
   font-size: 8px;
@@ -504,7 +504,7 @@ nav.nav--reveal { animation: navSlideIn 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
 /* Modelplane node */
 .arch-mp {
   position: relative;
-  background: rgba(0,220,232,0.05);
+  background: #001D2F;
   border: 1px solid rgba(0,220,232,0.4);
   border-radius: 12px;
   padding: 14px 18px;
@@ -568,7 +568,7 @@ nav.nav--reveal { animation: navSlideIn 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
 }
 .arch-env {
   min-width: 0;
-  background: rgba(255,255,255,0.025);
+  background: #001D2F;
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 10px;
@@ -576,7 +576,7 @@ nav.nav--reveal { animation: navSlideIn 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
 }
 .arch-env.is-active {
   border-color: rgba(0,220,232,0.55);
-  background: rgba(0,220,232,0.06);
+  background: linear-gradient(0deg, rgba(0,220,232,0.10), rgba(0,220,232,0.10)), #001D2F;
 }
 .arch-env-hd {
   display: flex;
@@ -789,7 +789,7 @@ hr.divider {
 
 /* diagram box shared style */
 .cap-diagram-box {
-  background: var(--bg-card);
+  background: #001D2F;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 18px;
@@ -844,7 +844,7 @@ hr.divider {
   align-items: stretch;
 }
 .hiw-role {
-  background: var(--bg-card);
+  background: #001D2F;
   border: 1px solid var(--border-hi);
   border-radius: 16px;
   padding: 18px;
@@ -948,7 +948,7 @@ hr.divider {
 .eco-orchestrates::after { right: 0; }
 
 .eco {
-  background: var(--bg-card);
+  background: #001D2F;
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
@@ -993,7 +993,7 @@ hr.divider {
 }
 .topo-card {
   display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px;
-  background: var(--bg-card);
+  background: #001D2F;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 22px 16px;
