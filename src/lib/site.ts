@@ -6,6 +6,17 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://modelplane
 )
 
 export const SITE_NAME = 'Modelplane'
+
+// Official Modelplane social accounts. The GitHub link points at the project
+// repository so visitors land ready to star.
+export const SOCIAL = {
+  github: 'https://github.com/modelplaneai/modelplane',
+  linkedin: 'https://www.linkedin.com/company/modelplane/',
+  x: 'https://x.com/ModelplaneAI',
+  bluesky: 'https://bsky.app/profile/modelplaneai.bsky.social',
+  youtube: 'https://www.youtube.com/@ModelplaneAI',
+}
+
 export const BLOG_TITLE = 'Modelplane Blog'
 export const BLOG_DESCRIPTION =
   'Engineering, research, and updates from the Modelplane community on running AI models on infrastructure you own.'
