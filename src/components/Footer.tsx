@@ -18,7 +18,8 @@ export default function Footer() {
           </div>
         </div>
         <p className="footer-legal">
-          © 2026 The Modelplane Authors. Modelplane™ is a trademark.
+          © 2026 The Modelplane Authors. Modelplane™ is a trademark.{' '}
+          <a href="https://www.upbound.io/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy</a>
         </p>
       </div>
     </footer>

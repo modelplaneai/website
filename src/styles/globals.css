@@ -1116,6 +1116,8 @@ footer {
   font-size: 12px;
   color: var(--muted);
 }
+.footer-legal a { color: var(--muted); text-decoration: underline; transition: color 0.2s; }
+.footer-legal a:hover { color: var(--text); }
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp {
