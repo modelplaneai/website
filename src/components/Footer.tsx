@@ -10,10 +10,14 @@ export default function Footer() {
               <img src="/icon-color.svg" alt="Modelplane" height={32} />
             </a>
             <span className="footer-tagline">Open source control plane for AI models</span>
+            <p className="footer-legal">
+              © 2026 The Modelplane Authors. Modelplane™ is a trademark.
+            </p>
           </div>
           <div className="footer-right">
             <a href="https://docs.modelplane.ai">Docs</a>
             <a href="/blog">Blog</a>
+            <a href="/privacy">Privacy</a>
             <a href="https://github.com/modelplaneai/modelplane" target="_blank" rel="noopener noreferrer" aria-label="Star Modelplane on GitHub"><GithubIcon /></a>
           </div>
         </div>

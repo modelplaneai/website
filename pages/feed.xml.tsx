@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     link: `${SITE_URL}/blog`,
     language: 'en',
     favicon: `${SITE_URL}/icon.png`,
-    copyright: `${new Date().getFullYear()} ${SITE_NAME}`,
+    copyright: `© ${new Date().getFullYear()} The Modelplane Authors. ${SITE_NAME}™ is a trademark.`,
     feedLinks: { rss2: `${SITE_URL}/feed.xml` },
   })
 
