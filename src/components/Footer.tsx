@@ -14,7 +14,7 @@ export default function Footer() {
           <div className="footer-right">
             <a href="https://docs.modelplane.ai">Docs</a>
             <a href="/blog">Blog</a>
-            <a href="https://github.com/modelplaneai" target="_blank" rel="noopener noreferrer" aria-label="GitHub"><GithubIcon /></a>
+            <a href="https://github.com/modelplaneai/modelplane" target="_blank" rel="noopener noreferrer" aria-label="Star Modelplane on GitHub"><GithubIcon /></a>
           </div>
         </div>
       </div>
