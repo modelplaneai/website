@@ -1,4 +1,4 @@
-const GITHUB_URL = 'https://github.com/modelplaneai'
+const GITHUB_URL = 'https://github.com/modelplaneai/modelplane'
 // TODO: replace placeholders with real destinations (not provided in the copy doc).
 const SLACK_URL = '#slack' // "Join the community"
 const HARDWARE_URL = '#bring-hardware' // "Bring hardware to the open test fleet"
@@ -26,7 +26,7 @@ export default function OpenSource() {
             Built by the team behind Crossplane, the proven open source foundation for infrastructure control planes, trusted at Apple, JPMC, Nike, Elastic, Grafana, and MongoDB.
           </p>
           <div className="oss-actions reveal">
-            <a href="#" className="btn-primary">Get started →</a>
+            <a href="https://docs.modelplane.ai/getting-started/" className="btn-primary">Get started →</a>
             <a href={GITHUB_URL} className="btn-ghost" target="_blank" rel="noopener noreferrer">
               <GithubMark />
               View on GitHub
