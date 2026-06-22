@@ -11,6 +11,7 @@ import rehypeUnwrapImages from 'rehype-unwrap-images'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PostMetaRow from '@/components/blog/PostMeta'
+import AuthorBio from '@/components/blog/AuthorBio'
 import PostCard from '@/components/blog/PostCard'
 import TableOfContents from '@/components/blog/TableOfContents'
 import ShareLinks from '@/components/blog/ShareLinks'
@@ -142,6 +143,8 @@ export default function PostPage({
                   </a>
                 </div>
               </article>
+
+              <AuthorBio authors={meta.authors} />
 
               {(prev || next) && (
                 <nav className="post-nav" aria-label="More posts">

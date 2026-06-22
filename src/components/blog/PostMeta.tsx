@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import { authorNameToSlug } from '@/lib/authors'
 import type { Author } from '@/lib/blog'
 
 export function formatDate(iso: string): string {
@@ -47,10 +49,8 @@ export default function PostMeta({
           <span className="post-author-names">
             {authors.map((a, i) => (
               <span key={a.name}>
-                {a.url && linkAuthors ? (
-                  <a href={a.url} target="_blank" rel="noopener noreferrer">
-                    {a.name}
-                  </a>
+                {linkAuthors ? (
+                  <Link href={`/blog/authors/${authorNameToSlug(a.name)}`}>{a.name}</Link>
                 ) : (
                   a.name
                 )}

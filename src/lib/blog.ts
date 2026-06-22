@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
 import readingTime from 'reading-time'
+import { authorNameToSlug } from './authors'
 
 // Build-time content loader for the blog. Reads MDX posts from content/blog/<slug>/index.mdx.
 // Co-located assets (images, video) live under public/blog/<slug>/ and are referenced by
@@ -14,6 +15,10 @@ export interface Author {
   title?: string
   url?: string
   avatar?: string
+  bio?: string
+  github?: string
+  linkedin?: string
+  x?: string
 }
 
 export interface PostMeta {
@@ -57,6 +62,10 @@ function normalizeAuthors(input: unknown): Author[] {
           title: author.title,
           url: author.url,
           avatar: author.avatar,
+          bio: author.bio,
+          github: author.github,
+          linkedin: author.linkedin,
+          x: author.x,
         }
       }
       return null
@@ -189,4 +198,51 @@ export function getRelatedPosts(slug: string, limit = 3): PostMeta[] {
     .sort((a, b) => b.score - a.score || (a.post.date < b.post.date ? 1 : -1))
 
   return scored.slice(0, limit).map((s) => s.post)
+}
+
+// An author with the URL slug and post count used by the author pages.
+export interface AuthorWithMeta extends Author {
+  slug: string
+  count: number
+}
+
+export { authorNameToSlug }
+
+// Every distinct author across posts, with details taken from their most recent
+// post (getAllPosts() is newest-first) and any gaps filled from older posts.
+export function getAllAuthors(): AuthorWithMeta[] {
+  const bySlug = new Map<string, AuthorWithMeta>()
+  getAllPosts().forEach((post) =>
+    post.authors.forEach((a) => {
+      const slug = authorNameToSlug(a.name)
+      const existing = bySlug.get(slug)
+      if (existing) {
+        existing.count += 1
+        existing.title ??= a.title
+        existing.url ??= a.url
+        existing.avatar ??= a.avatar
+        existing.bio ??= a.bio
+        existing.github ??= a.github
+        existing.linkedin ??= a.linkedin
+        existing.x ??= a.x
+      } else {
+        bySlug.set(slug, { ...a, slug, count: 1 })
+      }
+    })
+  )
+  return Array.from(bySlug.values()).sort((x, y) => x.name.localeCompare(y.name))
+}
+
+export function getAllAuthorSlugs(): string[] {
+  return getAllAuthors().map((a) => a.slug)
+}
+
+export function getAuthorBySlug(slug: string): AuthorWithMeta | null {
+  return getAllAuthors().find((a) => a.slug === slug) ?? null
+}
+
+export function getPostsByAuthor(slug: string): PostMeta[] {
+  return getAllPosts().filter((post) =>
+    post.authors.some((a) => authorNameToSlug(a.name) === slug)
+  )
 }
