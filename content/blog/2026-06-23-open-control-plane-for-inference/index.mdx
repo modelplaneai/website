@@ -61,6 +61,8 @@ do this, and they've all built it privately. The open one didn't exist.
 
 ## Introducing Modelplane
 
+![Modelplane reconciles model deployments across a fleet of clusters spanning cloud, neocloud, and on-premise.](/blog/open-control-plane-for-inference/fleet-architecture.png)
+
 This is why we built Modelplane. We've been watching Crossplane adopters build 
 inference platforms across clusters and operate it at large scale, 
 composing the clusters, the GPUs, the serving stacks, and the routing into their
@@ -73,8 +75,6 @@ platform, reconciling the whole fleet toward the state you declare. It does for 
 fleet what Kubernetes does for the cluster: platform teams and developers describe
 what they want as Kubernetes resources, and Modelplane composes the clusters,
 places the models, and exposes the endpoints to match.
-
-![Modelplane reconciles model deployments across a fleet of clusters spanning cloud, neocloud, and on-premise.](/blog/open-control-plane-for-inference/fleet-architecture.png)
 
 ### Modelplane API
 
@@ -132,7 +132,7 @@ spec:
 ```
 
 ML and development teams deploy models. They declare a `ModelDeployment` (the
-model, its engine, and a replica count) and a `ModelService` to expose it as one
+model, its engine, serving topology, and a replica count) and a `ModelService` to expose it as one
 stable, OpenAI-compatible endpoint:
 
 ```yaml title="model.yaml"
@@ -182,7 +182,7 @@ topology works without a change to Modelplane.
 
 Once those resources exist, five things run continuously across the fleet:
 
-- **Provisioning.** Create clusters and GPU node pools on AWS, GCP, and Azure, or
+- **Provisioning.** Create clusters and GPU node pools on hyperscalers, neoclouds or
   bring your own on any Kubernetes, and install the serving stack on each.
 - **Scheduling.** A two-level scheduler places each replica on a cluster and pool
   whose hardware matches using DRA and cel expressions, accounting capacity at
@@ -195,13 +195,13 @@ Once those resources exist, five things run continuously across the fleet:
 - **Caching.** Stage model weights on cluster storage once, so serving pods read
   them locally instead of re-downloading on every start.
 
-It stays neutral across models, engines, accelerators, clouds, and serving stacks,
+Modelplane stays neutral across models, engines, accelerators, clouds, and serving stacks,
 and composes them rather than replacing them.
 
 ## We're building in the open
 
 Modelplane is early, and we're releasing it at v0.1 so we can build it in the open,
-with the people who run inference. It's Apache 2, and we plan to donate it to a neutral
+with the community. It's Apache 2, and we plan to donate it to a neutral
 open source foundation later this year, because a control plane that sits above the
 ecosystem should belong to the ecosystem.
 
@@ -210,10 +210,10 @@ If you're running inference yourself, planning to, or hosting accelerators
 [github.com/modelplaneai](https://github.com/modelplaneai/), with a getting-started
 guide at [modelplane.io](https://modelplane.io) that takes you from nothing to a
 live endpoint in about 45 minutes. Come find us in the Kubernetes Slack (#modelplane),
-open issues, and help us shape it.
+open issues, contribute, and help us shape it.
 
 Kubernetes became the standard control plane for compute. With Modelplane, we’re extending
-that approach to AI inference across fleets of cloud, neocloud and datacenters.
+that same approach to AI inference across fleets of cloud, neocloud and datacenters.
 
 Intelligence is becoming the most important thing we build, and it shouldn’t be something
 you can only rent. Everyone should be able to own theirs.
