@@ -97,7 +97,7 @@ function DiagramScheduling() {
         <span className="cap-flow-arrow">→</span>
         <div style={flowCard}>
           <p style={tinyLabel}>cluster scheduler</p>
-          <p style={{ ...mono(9, 'var(--muted)'), marginBottom: '8px', lineHeight: 1.5 }}>DRA · KAI / Kueue / Volcano</p>
+          <p style={{ ...mono(9, 'var(--muted)'), marginBottom: '8px', lineHeight: 1.5 }}>DRA</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Unit n={4} />
             <span style={mono(9, 'var(--green)')}>bound</span>
@@ -232,7 +232,7 @@ const capabilities: Capability[] = [
   {
     label: '02 / Scheduling',
     title: 'One global pool of capacity',
-    body: "Modelplane treats every cluster, cloud, and region as one global pool. A fleet scheduler places each model's replicas where its requirements match a cluster's capabilities, then hands off to the cluster's own scheduler and DRA, with support for advanced schedulers like KAI, Kueue, and Volcano.",
+    body: "Modelplane treats every cluster, cloud, and region as one global pool. A fleet scheduler places each model's replicas where its requirements match a cluster's capabilities, then hands off to the cluster's own scheduler and DRA.",
   },
   {
     label: '03 / Autoscaling',
@@ -244,13 +244,6 @@ const capabilities: Capability[] = [
     label: '04 / Routing',
     title: 'One service, many replicas and endpoints',
     body: "A model service is one stable, OpenAI-compatible endpoint over many replicas and model endpoints. Weighted routing spreads traffic across replicas for canary and A/B rollouts, and a managed endpoint can take a weighted share too.",
-    roadmap: "Automatic cross-cloud failover is on the roadmap.",
-  },
-  {
-    label: '05 / Platform native',
-    title: 'The tools your team already knows',
-    body: "Platform teams operate Modelplane with the primitives they already own — Kubernetes APIs, GitOps workflows, Crossplane, Prometheus metrics, and RBAC. Declare inference clusters as code, manage them with ArgoCD or Flux, observe the fleet with your existing monitoring stack. No new control plane to learn. No separate operational model. Inference becomes just another workload your platform owns and governs.",
-    noDiagram: true,
   },
 ]
 
