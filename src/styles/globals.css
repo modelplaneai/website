@@ -1213,6 +1213,7 @@ footer {
   transition: color 0.2s;
 }
 .footer-right a:hover { color: var(--text); }
+.social-icons { display: inline-flex; align-items: center; gap: 16px; }
 .footer-by {
   font-family: var(--mono);
   font-size: 12px;

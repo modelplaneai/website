@@ -1,4 +1,4 @@
-import GithubIcon from '@/components/GithubIcon'
+import SocialIcons from '@/components/SocialIcons'
 
 export default function Footer() {
   return (
@@ -18,7 +18,7 @@ export default function Footer() {
             <a href="https://docs.modelplane.ai">Docs</a>
             <a href="/blog">Blog</a>
             <a href="/privacy">Privacy</a>
-            <a href="https://github.com/modelplaneai/modelplane" target="_blank" rel="noopener noreferrer" aria-label="Star Modelplane on GitHub"><GithubIcon /></a>
+            <SocialIcons />
           </div>
         </div>
       </div>
