@@ -1,46 +1,62 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:         #070714;
-  --bg-mid:     #0d0d1f;
-  --bg-card:    #0f0f22;
-  --border:     rgba(255,255,255,0.07);
-  --border-hi:  rgba(173,123,252,0.25);
+  /* Modelplane Design System — brand core (Figma "Website Style Guide") */
+  --mp-dark-spruce: #001D2F;
+  --mp-spruce:      #183D54;
+  --mp-spruce-elevated: #21465E;
+  --mp-spruce-line: #2C5067;
+  --mp-purple:      #9A5EFC;
+  --mp-purple-light:#AD7BFC;
+  --mp-sky:         #00DCE8;
+  --mp-green:       #35D0BA;
+  --mp-coral:       #F3807B;
+  --mp-yellow:      #FFCD3C;
+  --mp-lavender:    #B0AFCC;
+  --mp-lavender-dim:#8B8AAE;
+
+  /* Site aliases — retargeted to the design system so existing components inherit it */
+  --bg:         var(--mp-dark-spruce);
+  --bg-mid:     #00263C;
+  --bg-card:    var(--mp-spruce);
+  --border:     rgba(255,255,255,0.10);
+  --border-hi:  rgba(154,94,252,0.30);
   --text:       #ffffff;
-  --muted:      #8b8aae;
-  --muted-hi:   #b0afcc;
-  --purple:     #AD7BFC;
-  --purple-hi:  #C39EFD;
-  --cyan:       #22d3ee;
-  --green:      #34d399;
+  --muted:      var(--mp-lavender-dim);
+  --muted-hi:   var(--mp-lavender);
+  --purple:     var(--mp-purple);
+  --purple-hi:  var(--mp-purple-light);
+  --cyan:       var(--mp-sky);
+  --green:      var(--mp-green);
+  --coral:      var(--mp-coral);
+  --yellow:     var(--mp-yellow);
   --mono:       'DM Mono', 'Fira Code', monospace;
   --sans:       Inter, -apple-system, BlinkMacSystemFont, sans-serif;
+  --display:    'Outfit', var(--sans);
 }
 
-html { scroll-behavior: smooth; overflow-x: hidden; }
+/* overflow-x: clip (not hidden) prevents horizontal scroll from the hero's
+   bleeding flight paths WITHOUT creating a scroll container — `hidden` would
+   make `overflow-y` compute to `auto` and break `position: sticky` on the nav. */
+html { scroll-behavior: smooth; overflow-x: clip; }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(1100px 520px at 50% -180px, rgba(154,94,252,0.10), transparent 70%),
+    radial-gradient(720px 460px at 100% 40px, rgba(0,220,232,0.07), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--text);
   font-family: var(--sans);
   font-size: 16px;
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── GRID LINES ── */
-body::after {
-  content: '';
-  position: fixed; inset: 0; z-index: 0;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 80px 80px;
-  pointer-events: none;
-  opacity: 0.5;
-}
+/* Display headings use Outfit (Medium) per the design system. */
+h1, h2, h3, h4, h5, h6 { font-family: var(--display); }
 
 /* ── LAYOUT ── */
 .wrap {
@@ -54,9 +70,9 @@ body::after {
 nav {
   position: sticky; top: 0; z-index: 100;
   border-bottom: 1px solid var(--border);
-  background: rgba(7,7,20,0.85);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(0,29,47,0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 nav .wrap {
   display: flex; align-items: center; justify-content: space-between;
@@ -66,8 +82,20 @@ nav .wrap {
   display: flex;
   align-items: center;
   text-decoration: none;
+  transition: opacity 0.25s ease;
 }
 .nav-logo img { display: block; }
+
+/* Hero in view: hide the nav logo (the hero shows the big wordmark). Space is
+   kept so the right-aligned links don't shift. */
+nav.nav--top .nav-logo { opacity: 0; visibility: hidden; }
+
+/* Scrolled past the hero: the nav slides back in with the logo. */
+nav.nav--reveal { animation: navSlideIn 0.34s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes navSlideIn {
+  from { transform: translateY(-100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
 .nav-links {
   display: flex; align-items: center; gap: 28px;
   list-style: none;
@@ -82,14 +110,27 @@ nav .wrap {
 .nav-links a:hover { color: var(--text); }
 .nav-cta {
   font-size: 14px;
-  font-weight: 500;
-  color: var(--bg) !important;
+  font-weight: 600;
+  color: #fff !important;
   background: var(--purple);
   padding: 8px 20px;
-  border-radius: 6px;
+  border-radius: 999px;
   text-decoration: none;
+  box-shadow: 0 6px 20px rgba(154,94,252,0.30);
   transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
 }
+.nav-cta-ghost {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text) !important;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.28);
+  padding: 7px 16px;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+.nav-cta-ghost:hover { border-color: var(--cyan); color: var(--cyan) !important; }
 .nav-hamburger {
   display: none;
   flex-direction: column;
@@ -140,9 +181,9 @@ nav .wrap {
 }
 
 .nav-cta:hover {
-  background: var(--purple-hi);
+  background: linear-gradient(90deg, #9A5EFC 0%, #00DCE8 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(173,123,252,0.4);
+  box-shadow: 0 8px 28px rgba(0,220,232,0.30);
 }
 
 /* ── HERO ── */
@@ -241,9 +282,9 @@ nav .wrap {
 
 .hero-headline {
   font-size: clamp(36px, 4vw, 60px);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
   max-width: 600px;
   margin-bottom: 24px;
   opacity: 0;
@@ -281,34 +322,97 @@ nav .wrap {
 .btn-primary {
   font-size: 15px;
   font-weight: 600;
-  background: linear-gradient(135deg, var(--purple) 0%, #7c3aed 100%);
-  color: var(--text);
-  padding: 14px 32px;
-  border-radius: 8px;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--purple);
+  color: #fff;
+  padding: 14px 30px;
+  border-radius: 999px;
   text-decoration: none;
-  transition: transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 0 0 0 rgba(173,123,252,0.4);
+  transition: background 0.2s cubic-bezier(.22,1,.36,1), transform 0.12s, box-shadow 0.2s;
+  box-shadow: 0 6px 20px rgba(154,94,252,0.30);
 }
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 40px rgba(173,123,252,0.4);
+  background: linear-gradient(90deg, #9A5EFC 0%, #00DCE8 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(0,220,232,0.30);
 }
 
 .btn-ghost {
   font-size: 15px;
   font-weight: 500;
-  color: var(--muted-hi);
+  color: #fff;
   text-decoration: none;
   display: flex; align-items: center; gap: 8px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(255,255,255,0.28);
   padding: 13px 24px;
-  border-radius: 8px;
+  border-radius: 999px;
+  background: transparent;
   transition: color 0.2s, border-color 0.2s, background 0.2s;
 }
 .btn-ghost:hover {
-  color: var(--text);
-  border-color: var(--border-hi);
-  background: rgba(173,123,252,0.06);
+  color: var(--cyan);
+  border-color: var(--cyan);
+  background: transparent;
+}
+
+/* ── HERO (design-system redesign) ── */
+.herox {
+  position: relative;
+  overflow: hidden;
+  padding: 28px 0 56px;
+}
+.herox-decor { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.herox-decor svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.herox-inner { position: relative; z-index: 1; }
+.herox-wordmark { height: 52px; width: auto; display: block; }
+.herox-card {
+  margin-top: 28px;
+  background: var(--mp-dark-spruce);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 28px;
+  padding: 48px 52px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 48px;
+  align-items: center;
+}
+.herox-copy { flex: 1 1 380px; min-width: 0; }
+.herox-eyebrow {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mp-sky);
+  margin: 0;
+}
+.herox-headline {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(40px, 4.4vw, 56px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 20px 0 0;
+}
+.herox-sub {
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  color: #fff;
+  margin: 24px 0 0;
+  max-width: 440px;
+}
+.herox-actions { display: flex; gap: 14px; margin-top: 32px; flex-wrap: wrap; }
+.herox-diagram { flex: 1 1 540px; min-width: 0; }
+
+@keyframes mpFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+@media (max-width: 768px) {
+  .herox { padding: 20px 0 40px; }
+  .herox-wordmark { height: 40px; }
+  .herox-card { padding: 28px 22px; gap: 32px; border-radius: 22px; }
 }
 
 /* ── ARCH DIAGRAM ── */
@@ -336,15 +440,14 @@ nav .wrap {
   transition: border-color 0.5s ease, background 0.5s ease;
 }
 .arch-deploy.is-active {
-  border-color: rgba(173,123,252,0.5);
-  background: rgba(173,123,252,0.07);
+  border-color: rgba(154,94,252,0.6);
+  background: rgba(154,94,252,0.08);
 }
 .arch-kind {
   font-size: 8px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--muted);
-  opacity: 0.7;
+  color: rgba(255,255,255,0.7);
   margin-bottom: 6px;
 }
 .arch-deploy-hd {
@@ -354,23 +457,23 @@ nav .wrap {
   margin-bottom: 7px;
 }
 .arch-deploy-engine { font-size: 9px; color: var(--cyan); letter-spacing: 0.08em; white-space: nowrap; }
-.arch-deploy-model { font-size: 11px; font-weight: 600; color: var(--purple-hi); margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.arch-deploy-model { font-size: 11px; font-weight: 600; color: var(--purple); margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .arch-deploy-tags { display: flex; flex-wrap: wrap; gap: 4px; }
 .arch-deploy-topo {
   display: inline-block;
   font-size: 9px;
-  color: var(--muted);
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.92);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
   border-radius: 3px;
   padding: 1px 5px;
 }
 .arch-deploy-req {
   display: inline-block;
   font-size: 9px;
-  color: var(--purple-hi);
-  background: rgba(173,123,252,0.08);
-  border: 1px solid rgba(173,123,252,0.22);
+  color: #C3A6FF;
+  background: rgba(154,94,252,0.16);
+  border: 1px solid transparent;
   border-radius: 3px;
   padding: 1px 5px;
 }
@@ -382,10 +485,16 @@ nav .wrap {
   font-weight: 600;
 }
 .arch-badge--green {
-  color: var(--green);
-  background: rgba(52,211,153,0.08);
-  border: 1px solid rgba(52,211,153,0.2);
+  color: #6FE0CF;
+  background: rgba(53,208,186,0.15);
+  border: 1px solid transparent;
 }
+/* Connector strokes — kept to CSS (overrides inline SVG attrs): purple fan-in
+   above Modelplane, sky branches below, matching the DS diagram. */
+.arch-fanin-svg line { stroke: rgba(154,94,252,0.18); }
+.arch-fanin-svg .arch-rl { stroke: rgba(154,94,252,0.9); }
+.arch-branches-svg line { stroke: rgba(255,255,255,0.10); }
+.arch-branches-svg .arch-rl { stroke: rgba(0,220,232,0.85); }
 /* SVG connectors */
 .arch-fanin-svg { width: 100%; height: 36px; display: block; flex-shrink: 0; overflow: visible; }
 .arch-branches-svg { width: 100%; height: 36px; display: block; flex-shrink: 0; overflow: visible; }
@@ -395,8 +504,8 @@ nav .wrap {
 /* Modelplane node */
 .arch-mp {
   position: relative;
-  background: rgba(173,123,252,0.06);
-  border: 1px solid rgba(173,123,252,0.3);
+  background: rgba(0,220,232,0.05);
+  border: 1px solid rgba(0,220,232,0.4);
   border-radius: 12px;
   padding: 14px 18px;
 }
@@ -408,8 +517,8 @@ nav .wrap {
   animation: archMpPulse 3s ease-in-out infinite;
 }
 @keyframes archMpPulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(173,123,252,0); }
-  50%       { box-shadow: 0 0 28px 6px rgba(173,123,252,0.13); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,220,232,0); }
+  50%       { box-shadow: 0 0 28px 6px rgba(0,220,232,0.13); }
 }
 .arch-mp-row { display: flex; align-items: center; gap: 16px; }
 .arch-mp-brand {
@@ -427,14 +536,14 @@ nav .wrap {
   padding: 2px 5px;
 }
 .arch-mp-actions span {
-  color: var(--purple-hi);
-  background: rgba(173,123,252,0.1);
-  border: 1px solid rgba(173,123,252,0.28);
+  color: #C3A6FF;
+  background: rgba(154,94,252,0.16);
+  border: 1px solid rgba(154,94,252,0.35);
 }
 .arch-mp-honors span {
-  color: var(--muted);
+  color: rgba(255,255,255,0.85);
   background: transparent;
-  border: 1px dashed rgba(255,255,255,0.16);
+  border: 1px dashed rgba(255,255,255,0.28);
 }
 .arch-mp-live {
   display: flex; align-items: center; gap: 6px;
@@ -466,8 +575,8 @@ nav .wrap {
   transition: border-color 0.5s ease, background 0.5s ease;
 }
 .arch-env.is-active {
-  border-color: rgba(173,123,252,0.5);
-  background: rgba(173,123,252,0.07);
+  border-color: rgba(0,220,232,0.55);
+  background: rgba(0,220,232,0.06);
 }
 .arch-env-hd {
   display: flex;
@@ -483,9 +592,9 @@ nav .wrap {
   opacity: 0.6;
 }
 .arch-env-name { font-size: 12px; font-weight: 600; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.arch-env-sub  { font-size: 9px; color: var(--muted); margin-bottom: 7px; }
+.arch-env-sub  { font-size: 9px; color: rgba(255,255,255,0.7); margin-bottom: 7px; }
 .arch-env-classes { display: flex; flex-direction: column; gap: 4px; }
-.arch-env-class { display: flex; align-items: center; gap: 5px; font-size: 9px; color: var(--muted); white-space: nowrap; }
+.arch-env-class { display: flex; align-items: center; gap: 5px; font-size: 9px; color: rgba(255,255,255,0.92); white-space: nowrap; }
 .arch-dot-g {
   display: inline-block;
   width: 5px; height: 5px;
@@ -594,10 +703,10 @@ section { padding: 72px 0; position: relative; z-index: 1; }
 }
 
 .section-title {
-  font-size: clamp(28px, 3.2vw, 46px);
-  font-weight: 800;
+  font-size: clamp(28px, 3.2vw, 44px);
+  font-weight: 500;
   line-height: 1.1;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
   margin-bottom: 20px;
 }
 .grad {
@@ -611,7 +720,7 @@ section { padding: 72px 0; position: relative; z-index: 1; }
 
 .section-body {
   font-size: 17px;
-  color: var(--muted);
+  color: var(--text);
   max-width: 520px;
   line-height: 1.75;
 }
@@ -639,6 +748,8 @@ hr.divider {
   border-top: 1px solid var(--border);
 }
 .cap-feature--reverse .cap-feature-diagram { order: -1; }
+.cap-feature--full { grid-template-columns: 1fr; }
+.cap-feature--full .cap-feature-body { max-width: 760px; }
 
 .cap-feature-label {
   font-family: var(--mono);
@@ -664,14 +775,14 @@ hr.divider {
 }
 .cap-feature-title {
   font-size: clamp(20px, 2vw, 26px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1.2;
   margin-bottom: 16px;
 }
 .cap-feature-body {
   font-size: 16px;
-  color: var(--muted);
+  color: var(--text);
   line-height: 1.8;
   max-width: 480px;
 }
@@ -748,7 +859,7 @@ hr.divider {
   text-transform: uppercase;
   margin-bottom: 6px;
 }
-.hiw-role-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.hiw-role-sub { font-size: 13px; color: var(--text); line-height: 1.5; }
 .hiw-role-cards { display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: center; }
 .hiw-graph { display: flex; flex-direction: column; flex: 1; justify-content: center; }
 .hiw-graph-top { display: flex; }
@@ -889,7 +1000,7 @@ hr.divider {
 }
 .topo-shape { display: inline-flex; align-items: center; gap: 5px; min-height: 16px; }
 .topo-name { font-family: var(--mono); font-size: 12px; font-weight: 600; color: var(--text); }
-.topo-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
+.topo-desc { font-size: 12px; color: var(--text); line-height: 1.55; }
 .topo-next { background: transparent; border-style: dashed; }
 .topo-next .topo-name { color: var(--muted); font-style: italic; }
 .topo-ph { width: 16px; height: 16px; border-radius: 3px; border: 1px dashed var(--border-hi); opacity: 0.5; }
@@ -1296,7 +1407,7 @@ a.post-tag:hover { border-color: var(--border-hi); color: var(--text); }
 }
 .post-back:hover { color: var(--text); }
 .post-header .post-tags { justify-content: center; margin-top: 20px; }
-.post-title { font-size: clamp(32px, 4.5vw, 52px); font-weight: 800; line-height: 1.1; letter-spacing: -0.02em; }
+.post-title { font-size: clamp(32px, 4.5vw, 52px); font-weight: 500; line-height: 1.1; letter-spacing: -0.01em; }
 .post-lead { color: var(--muted-hi); font-size: 19px; line-height: 1.6; margin: 18px auto 24px; max-width: 620px; }
 .post-header .post-meta { justify-content: center; }
 

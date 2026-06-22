@@ -42,12 +42,12 @@ export default function Topologies() {
   return (
     <section id="topologies" className="topo-section">
       <div className="wrap">
-        <h2 className="section-title reveal">Advanced serving. <span className="grad">From one GPU to frontier.</span></h2>
+        <h2 className="section-title reveal">Advanced serving. <span className="grad">From single GPU to frontier.</span></h2>
         <p className="section-body section-body--wide reveal">
-          Modelplane matches each model&rsquo;s requirements and serving topology to the hardware
+          Modelplane matches each model&rsquo;s requirements and serving topologies to the hardware
           available, using expressive CEL selectors and composable API shapes. Topology is declared
           as shape, so it places anything from a single GPU to multi-node, disaggregated frontier
-          serving, and new parallelism strategies work as they emerge.
+          serving, and new parallelism strategies as they emerge.
         </p>
 
         <div className="topo-grid reveal">

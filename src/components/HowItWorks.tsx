@@ -40,9 +40,9 @@ export default function HowItWorks() {
   return (
     <section id="how" className="hiw-section">
       <div className="wrap">
-        <h2 className="section-title reveal">A resource model for inference. <span className="grad">Serving two roles.</span></h2>
+        <h2 className="section-title reveal">A resource API for inference. <span className="grad">Serving two roles.</span></h2>
         <p className="section-body section-body--wide reveal">
-          At its core, Modelplane is a flexible resource model for inference. Each role owns its own
+          Modelplane defines a flexible API for inference. Each role owns its own
           resources: developers declare model deployments and expose one service across regions,
           clouds, and managed vendors, while platform teams declare the fleet of clusters,
           accelerators, and gateways underneath.
