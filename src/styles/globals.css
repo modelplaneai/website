@@ -948,7 +948,7 @@ hr.divider {
 .eco-orchestrates::after { right: 0; }
 
 .eco {
-  background: var(--bg-card);
+  background: #001D2F;
   border: 1px solid var(--border);
   border-radius: 16px;
   overflow: hidden;
