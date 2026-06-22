@@ -1,7 +1,7 @@
 const GITHUB_URL = 'https://github.com/modelplaneai/modelplane'
-// TODO: replace placeholders with real destinations (not provided in the copy doc).
-const SLACK_URL = '#slack' // "Join the community"
-const HARDWARE_URL = '#bring-hardware' // "Bring hardware to the open test fleet"
+// TODO: confirm the canonical community link. The README points at the
+// #modelplane channel in the Kubernetes Slack.
+const SLACK_URL = 'https://kubernetes.slack.com'
 
 function GithubMark() {
   return (
@@ -13,54 +13,32 @@ function GithubMark() {
 
 export default function OpenSource() {
   return (
-    <>
-      <section className="oss-section">
-        <div className="wrap">
-          <h2 className="section-title reveal">
-            Genuinely open. <span className="grad">Yours to run and operate.</span>
-          </h2>
-          <p className="section-body section-body--wide reveal">
-            Modelplane is Apache 2 and open source end to end. The control plane lives entirely in your infrastructure and depends on nothing outside it, so no vendor can restrict, throttle, or revoke access. Donation to a neutral open source foundation is planned.
-          </p>
-          <p className="section-body section-body--wide reveal">
-            Built by the team behind Crossplane, the proven open source foundation for infrastructure control planes, trusted at Apple, JPMC, Nike, Elastic, Grafana, and MongoDB.
-          </p>
-          <div className="oss-actions reveal">
-            <a href="https://docs.modelplane.ai/getting-started/" className="btn-primary">Get started →</a>
-            <a href={GITHUB_URL} className="btn-ghost" target="_blank" rel="noopener noreferrer">
-              <GithubMark />
-              View on GitHub
-            </a>
-          </div>
+    <section className="oss-section">
+      <div className="wrap">
+        <h2 className="section-title reveal">
+          Genuinely open. <span className="grad">Community driven.</span>
+        </h2>
+        <p className="section-body section-body--wide reveal">
+          Modelplane is Apache 2.0 and open source end to end. It runs entirely in your own
+          infrastructure and depends on nothing outside it, so no vendor can throttle, restrict, or
+          revoke access.
+        </p>
+        <p className="section-body section-body--wide reveal">
+          It&rsquo;s built by the team behind Crossplane, the open source control plane trusted at
+          Apple, JPMC, Nike, Elastic, Grafana, and MongoDB, and it&rsquo;s headed for a neutral open
+          source foundation. Built in the open: star the project, join the community, and help shape
+          the project.
+        </p>
+        <div className="oss-actions reveal">
+          <a href={GITHUB_URL} className="btn-primary" target="_blank" rel="noopener noreferrer">
+            <GithubMark />
+            ★ Star on GitHub
+          </a>
+          <a href={SLACK_URL} className="btn-ghost" target="_blank" rel="noopener noreferrer">
+            Join the community
+          </a>
         </div>
-      </section>
-
-      <hr className="divider" />
-
-      <section className="oss-section">
-        <div className="wrap">
-          <h2 className="section-title reveal">
-            Build it <span className="grad">in the open.</span>
-          </h2>
-          <p className="section-body section-body--wide reveal">
-            Modelplane is Apache 2 and developed in public, headed for a neutral foundation. If you run
-            accelerators &mdash; any vendor, any cloud, on-prem &mdash; you can help prove out the fleet
-            across real hardware and shape the API before it sets.
-          </p>
-          <div className="oss-actions reveal">
-            <a href={GITHUB_URL} className="btn-primary" target="_blank" rel="noopener noreferrer">
-              <GithubMark />
-              ★ Star on GitHub
-            </a>
-            <a href={SLACK_URL} className="btn-ghost" target="_blank" rel="noopener noreferrer">
-              Join the community
-            </a>
-            <a href={HARDWARE_URL} className="btn-ghost" target="_blank" rel="noopener noreferrer">
-              Bring hardware to the open test fleet
-            </a>
-          </div>
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   )
 }
