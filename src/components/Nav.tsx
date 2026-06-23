@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import GithubIcon from '@/components/GithubIcon'
 
 const GITHUB_URL = 'https://github.com/modelplaneai/modelplane'
-const SLACK_URL = 'slack.modelplane.ai'
+const SLACK_URL = 'https://slack.modelplane.ai'
 
 export default function Nav() {
   const [open, setOpen] = useState(false)
