@@ -12,6 +12,18 @@ const nextConfig = {
       { source: '/docs/:path*', destination: 'https://docs.modelplane.ai/:path*', statusCode: 301 },
       // The pre-launch preview lived at /preview; it is now the home page.
       { source: '/preview', destination: '/', statusCode: 301 },
+      {
+        source: '/',
+        has: [
+          {
+            type: 'host',
+            value: 'slack.modelplane.ai',
+          },
+        ],
+        destination:
+          'https://join.slack.com/t/modelplane/shared_invite/zt-426rmxjk0-9EdeAfiDSvQA823gAAQk5g',
+        permanent: false,
+      },
     ]
   },
 }
