@@ -1,7 +1,7 @@
-import Head from 'next/head'
+import Seo from '@/components/Seo'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
-import { SITE_URL } from '@/lib/site'
+import { SITE_URL, ogCardUrl } from '@/lib/site'
 
 const TITLE = 'Intelligence belongs to everyone'
 const DESCRIPTION =
@@ -12,18 +12,14 @@ export default function Manifesto() {
 
   return (
     <>
-      <Head>
-        <title>Manifesto · Modelplane</title>
-        <meta name="description" content={DESCRIPTION} />
-        <link rel="canonical" href={url} />
-        <meta property="og:title" content={`${TITLE} · Modelplane`} />
-        <meta property="og:description" content={DESCRIPTION} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={url} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={`${TITLE} · Modelplane`} />
-        <meta name="twitter:description" content={DESCRIPTION} />
-      </Head>
+      <Seo
+        title="Manifesto · Modelplane"
+        ogTitle={`${TITLE} · Modelplane`}
+        description={DESCRIPTION}
+        url={url}
+        type="article"
+        image={ogCardUrl({ title: TITLE })}
+      />
       <Nav />
       <main className="blog-main">
         <div className="wrap">

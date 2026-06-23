@@ -7,6 +7,23 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || 'https://modelplane
 
 export const SITE_NAME = 'Modelplane'
 
+// Site-wide SEO defaults. Used by <Seo> when a page does not override them, and
+// kept here so the home page <title> and the global social card stay in sync.
+export const DEFAULT_TITLE = 'Modelplane · The open source control plane for AI inference'
+export const DEFAULT_DESCRIPTION =
+  'Modelplane is the open source control plane for AI models. Deploy any model on any GPU infrastructure you own (cloud, neocloud, or on-premise) and let the control plane operate it continuously.'
+export const DEFAULT_OG_TITLE = 'Modelplane · Open Source Control Plane for AI Models'
+export const DEFAULT_OG_DESCRIPTION =
+  'Run any model on infrastructure you own. The control plane provisions, reconciles, and governs it continuously, without humans in the loop.'
+
+// Absolute URL for a dynamically rendered Open Graph card. `accent`, when it is a
+// trailing phrase of `title`, is rendered in the brand purple→sky gradient.
+export function ogCardUrl({ title, accent }: { title: string; accent?: string }): string {
+  const params = new URLSearchParams({ title })
+  if (accent) params.set('accent', accent)
+  return `${SITE_URL}/api/og?${params.toString()}`
+}
+
 // Official Modelplane social accounts. The GitHub link points at the project
 // repository so visitors land ready to star.
 export const SOCIAL = {

@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import Link from 'next/link'
 import type { GetStaticPaths, GetStaticProps } from 'next'
 import { serialize } from 'next-mdx-remote/serialize'
@@ -13,6 +12,7 @@ import Footer from '@/components/Footer'
 import PostMetaRow from '@/components/blog/PostMeta'
 import AuthorBio from '@/components/blog/AuthorBio'
 import PostCard from '@/components/blog/PostCard'
+import Seo from '@/components/Seo'
 import TableOfContents from '@/components/blog/TableOfContents'
 import ShareLinks from '@/components/blog/ShareLinks'
 import { mdxComponents } from '@/components/mdx'
@@ -25,7 +25,7 @@ import {
   type PostMeta,
 } from '@/lib/blog'
 import { extractToc, type TocItem } from '@/lib/toc'
-import { SITE_URL, githubSourceUrl } from '@/lib/site'
+import { SITE_URL, githubSourceUrl, ogCardUrl } from '@/lib/site'
 
 interface PostPageProps {
   meta: PostMeta
@@ -39,9 +39,7 @@ interface PostPageProps {
 
 function ogImageFor(meta: PostMeta): string {
   if (meta.cover) return meta.cover.startsWith('http') ? meta.cover : `${SITE_URL}${meta.cover}`
-  const params = new URLSearchParams({ title: meta.title })
-  if (meta.authors[0]) params.set('author', meta.authors[0].name)
-  return `${SITE_URL}/api/og?${params.toString()}`
+  return ogCardUrl({ title: meta.title })
 }
 
 export default function PostPage({
@@ -58,27 +56,24 @@ export default function PostPage({
 
   return (
     <>
-      <Head>
-        <title>{`${meta.title} · Modelplane Blog`}</title>
-        <meta name="description" content={meta.description} />
-        <link rel="canonical" href={url} />
-        <meta property="og:title" content={meta.title} />
-        <meta property="og:description" content={meta.description} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={url} />
-        <meta property="og:image" content={ogImage} />
-        <meta property="article:published_time" content={meta.date} />
+      <Seo
+        title={`${meta.title} · Modelplane Blog`}
+        ogTitle={meta.title}
+        description={meta.description}
+        url={url}
+        image={ogImage}
+        imageWidth={meta.cover ? null : undefined}
+        imageHeight={meta.cover ? null : undefined}
+        type="article"
+      >
+        <meta key="article:published_time" property="article:published_time" content={meta.date} />
         {meta.authors.map((a) => (
-          <meta property="article:author" content={a.name} key={a.name} />
+          <meta property="article:author" content={a.name} key={`author-${a.name}`} />
         ))}
         {meta.tags.map((tag) => (
-          <meta property="article:tag" content={tag} key={tag} />
+          <meta property="article:tag" content={tag} key={`tag-${tag}`} />
         ))}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={meta.title} />
-        <meta name="twitter:description" content={meta.description} />
-        <meta name="twitter:image" content={ogImage} />
-      </Head>
+      </Seo>
       <Nav />
       <main className="blog-main">
         <div className="wrap">

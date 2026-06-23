@@ -1,5 +1,6 @@
-import Head from 'next/head'
 import { useEffect } from 'react'
+import Seo from '@/components/Seo'
+import { SITE_URL } from '@/lib/site'
 import Nav from '@/components/Nav'
 import Hero from '@/components/Hero'
 import Capabilities from '@/components/Capabilities'
@@ -33,9 +34,7 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>Modelplane · The open source control plane for AI inference</title>
-      </Head>
+      <Seo url={SITE_URL} />
       <Nav />
       <Hero />
       <hr className="divider" />

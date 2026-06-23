@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
-import Head from 'next/head'
 import type { GetStaticProps } from 'next'
+import Seo from '@/components/Seo'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PostCard from '@/components/blog/PostCard'
 import PostList from '@/components/blog/PostList'
 import BlogSidebar from '@/components/blog/BlogSidebar'
 import { getAllPosts, getListingPosts, getTagCounts, type PostMeta } from '@/lib/blog'
-import { SITE_URL, BLOG_TITLE, BLOG_DESCRIPTION } from '@/lib/site'
+import { SITE_URL, BLOG_TITLE, BLOG_DESCRIPTION, ogCardUrl } from '@/lib/site'
 
 interface BlogIndexProps {
   posts: PostMeta[]
@@ -40,21 +40,20 @@ export default function BlogIndex({ posts, recent, tagCounts }: BlogIndexProps) 
 
   return (
     <>
-      <Head>
-        <title>{`${BLOG_TITLE} · Modelplane`}</title>
-        <meta name="description" content={BLOG_DESCRIPTION} />
-        <link rel="canonical" href={`${SITE_URL}/blog`} />
-        <meta property="og:title" content={BLOG_TITLE} />
-        <meta property="og:description" content={BLOG_DESCRIPTION} />
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content={`${SITE_URL}/blog`} />
+      <Seo
+        title={`${BLOG_TITLE} · Modelplane`}
+        ogTitle={BLOG_TITLE}
+        description={BLOG_DESCRIPTION}
+        url={`${SITE_URL}/blog`}
+        image={ogCardUrl({ title: 'From the Modelplane community' })}
+      >
         <link
           rel="alternate"
           type="application/rss+xml"
           title={BLOG_TITLE}
           href={`${SITE_URL}/feed.xml`}
         />
-      </Head>
+      </Seo>
       <Nav />
       <main className="blog-main">
         <div className="wrap">
