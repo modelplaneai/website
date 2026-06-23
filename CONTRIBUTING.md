@@ -42,6 +42,13 @@ npm run build
 Opening a pull request creates a Vercel preview deployment you can use to review
 the change in a real environment.
 
+## Work from a fork
+
+Open every PR from a branch on your own
+[fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo),
+never a branch of the main repo. This holds for maintainers too, and for any
+agent working on your behalf: point it at your fork.
+
 ## Assets
 
 Only add images, icons, fonts, or logos that you have the right to redistribute
