@@ -1,4 +1,4 @@
-import Head from 'next/head'
+import Seo from '@/components/Seo'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import { SITE_URL } from '@/lib/site'
@@ -13,16 +13,14 @@ export default function Privacy() {
 
   return (
     <>
-      <Head>
-        <title>Privacy Policy · Modelplane</title>
-        <meta name="description" content={DESCRIPTION} />
-        <link rel="canonical" href={url} />
-        <meta property="og:title" content={`${TITLE} · Modelplane`} />
-        <meta property="og:description" content={DESCRIPTION} />
-        <meta property="og:type" content="article" />
-        <meta property="og:url" content={url} />
-        <meta name="robots" content="noindex" />
-      </Head>
+      <Seo
+        title="Privacy Policy · Modelplane"
+        ogTitle={`${TITLE} · Modelplane`}
+        description={DESCRIPTION}
+        url={url}
+        type="article"
+        noindex
+      />
       <Nav />
       <main className="blog-main">
         <div className="wrap">

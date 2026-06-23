@@ -1,6 +1,6 @@
-import Head from 'next/head'
 import Link from 'next/link'
 import type { GetStaticPaths, GetStaticProps } from 'next'
+import Seo from '@/components/Seo'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PostCard from '@/components/blog/PostCard'
@@ -12,7 +12,7 @@ import {
   type AuthorWithMeta,
   type PostMeta,
 } from '@/lib/blog'
-import { SITE_URL } from '@/lib/site'
+import { SITE_URL, ogCardUrl } from '@/lib/site'
 
 interface AuthorPageProps {
   author: AuthorWithMeta
@@ -23,14 +23,13 @@ export default function AuthorPage({ author, posts }: AuthorPageProps) {
   const count = posts.length
   return (
     <>
-      <Head>
-        <title>{`${author.name} · Modelplane Blog`}</title>
-        <meta
-          name="description"
-          content={author.bio ?? `Posts by ${author.name} on the Modelplane blog.`}
-        />
-        <link rel="canonical" href={`${SITE_URL}/blog/authors/${author.slug}`} />
-      </Head>
+      <Seo
+        title={`${author.name} · Modelplane Blog`}
+        ogTitle={author.name}
+        description={author.bio ?? `Posts by ${author.name} on the Modelplane blog.`}
+        url={`${SITE_URL}/blog/authors/${author.slug}`}
+        image={ogCardUrl({ title: author.name })}
+      />
       <Nav />
       <main className="blog-main">
         <div className="wrap">

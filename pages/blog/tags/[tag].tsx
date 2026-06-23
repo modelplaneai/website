@@ -1,11 +1,11 @@
-import Head from 'next/head'
 import Link from 'next/link'
 import type { GetStaticPaths, GetStaticProps } from 'next'
+import Seo from '@/components/Seo'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 import PostCard from '@/components/blog/PostCard'
 import { getAllTags, getPostsByTag, type PostMeta } from '@/lib/blog'
-import { SITE_URL } from '@/lib/site'
+import { SITE_URL, ogCardUrl } from '@/lib/site'
 
 interface TagPageProps {
   tag: string
@@ -16,11 +16,13 @@ export default function TagPage({ tag, posts }: TagPageProps) {
   const title = `Posts tagged "${tag}"`
   return (
     <>
-      <Head>
-        <title>{`${title} · Modelplane Blog`}</title>
-        <meta name="description" content={`Modelplane blog posts tagged ${tag}.`} />
-        <link rel="canonical" href={`${SITE_URL}/blog/tags/${encodeURIComponent(tag)}`} />
-      </Head>
+      <Seo
+        title={`${title} · Modelplane Blog`}
+        ogTitle={title}
+        description={`Modelplane blog posts tagged ${tag}.`}
+        url={`${SITE_URL}/blog/tags/${encodeURIComponent(tag)}`}
+        image={ogCardUrl({ title: `#${tag}` })}
+      />
       <Nav />
       <main className="blog-main">
         <div className="wrap">
