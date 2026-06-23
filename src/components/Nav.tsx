@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react'
 import GithubIcon from '@/components/GithubIcon'
 
 const GITHUB_URL = 'https://github.com/modelplaneai/modelplane'
-// TODO: replace with the real Slack invite URL (not provided in the copy doc).
-const SLACK_URL = '#slack'
+const SLACK_URL = 'slack.modelplane.ai'
 
 export default function Nav() {
   const [open, setOpen] = useState(false)

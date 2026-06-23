@@ -1,7 +1,5 @@
 const GITHUB_URL = 'https://github.com/modelplaneai/modelplane'
-// TODO: confirm the canonical community link. The README points at the
-// #modelplane channel in the Kubernetes Slack.
-const SLACK_URL = 'https://kubernetes.slack.com'
+const SLACK_URL = 'https://slack.modelplane.ai'
 
 function GithubMark() {
   return (
