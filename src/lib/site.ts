@@ -12,7 +12,7 @@ export const SITE_NAME = 'Modelplane'
 export const DEFAULT_TITLE = 'Modelplane · The open source control plane for AI inference'
 export const DEFAULT_DESCRIPTION =
   'Modelplane is the open source control plane for AI models. Deploy any model on any GPU infrastructure you own (cloud, neocloud, or on-premise) and let the control plane operate it continuously.'
-export const DEFAULT_OG_TITLE = 'Modelplane · Open Source Control Plane for AI Models'
+export const DEFAULT_OG_TITLE = 'Modelplane · The open source control plane for AI inference'
 export const DEFAULT_OG_DESCRIPTION =
   'Run any model on infrastructure you own. The control plane provisions, reconciles, and governs it continuously, without humans in the loop.'
 
