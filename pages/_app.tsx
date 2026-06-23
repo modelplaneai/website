@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app'
+import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -13,6 +14,12 @@ const GA_MEASUREMENT_ID = 'G-YP8274QQR9'
 const COMMON_ROOM_SITE_ID = 'c3ff1a35-122c-4945-9c2a-fc368b45cf1e'
 
 export default function App({ Component, pageProps }: AppProps) {
+  // Group pageviews so blog traffic can be separated from the rest of the
+  // site in reporting. Blog pages live under /blog; everything else is the
+  // marketing website.
+  const { pathname } = useRouter()
+  const contentGroup = pathname.startsWith('/blog') ? 'Blog' : 'Website'
+
   return (
     <>
       <Component {...pageProps} />
@@ -29,7 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${GA_MEASUREMENT_ID}');
+              gtag('config', '${GA_MEASUREMENT_ID}', { content_group: '${contentGroup}' });
             `}
           </Script>
           <Script id="common-room" strategy="afterInteractive">
