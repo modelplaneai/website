@@ -1,5 +1,5 @@
 ---
-title: "Modelplane v0.2: more clouds, and traffic you can steer"
+title: "Modelplane v0.2: more clouds, and traffic you can direct"
 description: "Modelplane v0.2 adds Nebius and Azure AKS as inference cluster providers, weighted routing for safe model rollouts, and cluster taints for reserving and draining capacity."
 date: "2026-07-16"
 authors:
@@ -18,15 +18,19 @@ pinned: false
 ---
 
 Modelplane v0.2 is out. We open sourced the project three weeks ago, and since then
-we've had a lot of traction and some great discussions with people running inference,
-so we wanted to keep the momentum going with another release. It adds two more cloud
-providers, weighted request routing, and cluster taints for reserving and draining
-capacity. Here's what's new.
+we've had a lot of traction and some great discussions with people running inference.
+The mission driving each release is the same: Modelplane brings together the models,
+engines, clouds, and accelerators that make up the intelligence ecosystem so you can
+operate them as a single system under your control. And we are building this in the
+open.
+
+This release adds two more cloud providers, weighted request routing, and cluster
+taints for reserving and draining capacity. Here's what's new.
 
 ## More providers
 
-At launch, Modelplane provisioned inference clusters on GKE, or ran on any Kubernetes
-you brought yourself. v0.2 adds two more providers, [Nebius](https://nebius.com) and
+At launch, Modelplane provisioned inference clusters on GKE and EKS, or ran on any
+Kubernetes you brought yourself. v0.2 adds two more providers, [Nebius](https://nebius.com) and
 [Azure AKS](https://azure.microsoft.com/en-us/products/kubernetes-service). A Nebius
 cluster is about as much YAML as it sounds like it should be. You name it, point it at
 Nebius, and Modelplane provisions the rest from the credentials you already configured:
