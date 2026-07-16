@@ -1,0 +1,133 @@
+---
+title: "Modelplane v0.2: more clouds, and traffic you can steer"
+description: "Modelplane v0.2 adds Nebius and Azure AKS as inference cluster providers, weighted routing for safe model rollouts, and cluster taints for reserving and draining capacity."
+date: "2026-07-16"
+authors:
+  - name: "Bassam Tabbara"
+    title: "Founder & CEO, Upbound"
+    url: "https://github.com/bassam"
+    avatar: "/blog/modelplane-v0-2/bassam.png"
+    github: "https://github.com/bassam"
+    linkedin: "https://www.linkedin.com/in/bassamtabbara/"
+    x: "https://x.com/bassamtabbara"
+    bio: "Bassam is the founder and CEO of Upbound and the creator of Crossplane and Rook, two CNCF Graduated projects. He's spent the last two decades working on cloud and infrastructure, and is now bringing that work to AI inference with Modelplane."
+tags: ["release", "inference", "routing"]
+cover: "/blog/modelplane-v0-2/cover.png"
+draft: true
+pinned: false
+---
+
+Modelplane v0.2 is out. We open sourced the project three weeks ago, and since then
+we've had a lot of traction and some great discussions with people running inference,
+so we wanted to keep the momentum going with another release. It adds two more cloud
+providers, weighted request routing, and cluster taints for reserving and draining
+capacity. Here's what's new.
+
+## More providers
+
+At launch, Modelplane provisioned inference clusters on GKE, or ran on any Kubernetes
+you brought yourself. v0.2 adds two more providers, [Nebius](https://nebius.com) and
+[Azure AKS](https://azure.microsoft.com/en-us/products/kubernetes-service). A Nebius
+cluster is about as much YAML as it sounds like it should be. You name it, point it at
+Nebius, and Modelplane provisions the rest from the credentials you already configured:
+
+```yaml title="nebius-cluster.yaml"
+apiVersion: modelplane.ai/v1alpha1
+kind: InferenceCluster
+metadata:
+  name: nebius-eu-north
+  labels:
+    modelplane.ai/region: eu-north
+spec:
+  cluster:
+    source: Nebius
+    nebius: {}
+  nodePools:
+  - name: gpu-h100
+    className: nebius-h100-8x
+    nodeCount: 1
+    minNodeCount: 1
+    maxNodeCount: 4
+```
+
+Both work the same way as GKE: an `InferenceClass` describes the hardware, an
+`InferenceCluster` provisions it, and the same `nodePools` model applies. On GKE, the
+GPU node pools Modelplane creates now cold-start from zero, so an idle pool stops
+billing you when nothing is running on it.
+
+You can also still bring your own cluster on any Kubernetes, on any cloud or on-prem,
+for providers Modelplane doesn't provision yet. If you want a provisioner for a
+particular cloud, upvote or open an
+[issue](https://github.com/modelplaneai/modelplane/issues).
+
+## Weighted routing
+
+A `ModelService` can now split traffic across its endpoints by weight:
+
+```yaml title="model-service.yaml"
+apiVersion: modelplane.ai/v1alpha1
+kind: ModelService
+metadata:
+  name: qwen
+  namespace: ml-team
+spec:
+  endpoints:
+  - weight: 95
+    selector:
+      matchLabels:
+        modelplane.ai/deployment: qwen3-8b
+  - weight: 5
+    selector:
+      matchLabels:
+        modelplane.ai/deployment: qwen3-8b-v2
+```
+
+Weights are relative, and an endpoint with no weight defaults to 1. The endpoint stays
+fixed while you change the split, which covers canarying a new model version, shifting
+traffic between two deployments, and splitting between a hosted provider and your own
+deployment. Weights are the first step here, and there's a lot more routing
+functionality on the way.
+
+## Taints and draining clusters
+
+v0.2 also lets you decide which clusters take work, using the same taints and
+tolerations that Kubernetes already uses for nodes, lifted up to the cluster. You taint
+an `InferenceCluster`, and only models that tolerate the taint will schedule onto it:
+
+```yaml title="reserve-cluster.yaml"
+apiVersion: modelplane.ai/v1alpha1
+kind: InferenceCluster
+metadata:
+  name: gpu-us-east
+spec:
+  taints:
+  - key: modelplane.ai/reserved
+    effect: NoSchedule
+```
+
+This is useful for keeping a sovereign cluster, or one with scarce hardware, for the
+workloads that need it. A deployment opts in with a matching toleration under its
+template:
+
+```yaml title="model-deployment.yaml"
+apiVersion: modelplane.ai/v1alpha1
+kind: ModelDeployment
+spec:
+  replicas: 2
+  template:
+    spec:
+      tolerations:
+      - key: modelplane.ai/reserved
+        operator: Exists
+```
+
+The same mechanism drains a cluster. Taint it with `NoExecute` instead of `NoSchedule`
+and Modelplane moves the running replicas off onto other clusters in the fleet, so you
+can take a cluster out for maintenance without hand-migrating what's on it. Remove the
+taint and it takes work again.
+
+The full release notes are on
+[GitHub](https://github.com/modelplaneai/modelplane/releases/tag/v0.2.0), and the
+[getting-started guide](https://docs.modelplane.ai/getting-started/) now covers
+deploying on AKS and Nebius. Questions and feedback are welcome in
+[Slack](https://slack.modelplane.ai).
