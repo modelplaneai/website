@@ -114,9 +114,13 @@ function slugToFolder(slug: string): string | undefined {
   return getPostFolders().find((folder) => folderToSlug(folder) === slug)
 }
 
-// Drafts are visible in dev/preview but hidden in production builds.
+// Drafts render in local dev and on Vercel preview deployments, but never on
+// the production site. Vercel runs `next build` with NODE_ENV=production for
+// every deployment, so preview must be distinguished by VERCEL_ENV.
 function isVisible(meta: PostMeta): boolean {
-  return process.env.NODE_ENV !== 'production' || !meta.draft
+  if (!meta.draft) return true
+  if (process.env.VERCEL_ENV === 'preview') return true
+  return process.env.NODE_ENV !== 'production'
 }
 
 export function getAllPosts(): PostMeta[] {
