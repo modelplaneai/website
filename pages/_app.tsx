@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import Script from 'next/script'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
+import MetricoolPixel from '@/components/MetricoolPixel'
 import '@/styles/globals.css'
 
 // Google Analytics 4. The Measurement ID is not secret (it ships to the
@@ -27,6 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <SpeedInsights />
       {process.env.NODE_ENV === 'production' && (
         <>
+          <MetricoolPixel />
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
             strategy="afterInteractive"
