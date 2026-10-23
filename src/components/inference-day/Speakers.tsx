@@ -57,6 +57,7 @@ export default function Speakers() {
                 className="id-photo"
                 loading="lazy"
               />
+              {p.tag && <p className="id-panel-tag">{p.tag}</p>}
               <h3 className="id-panel-name">{p.name}</h3>
               <p className="id-panel-role">{p.role}</p>
               <p className="id-panel-project">{p.project}</p>
@@ -64,7 +65,7 @@ export default function Speakers() {
           ))}
         </div>
 
-        <p className="id-panel-footnote">{speakers.footnote}</p>
+        {speakers.footnote && <p className="id-panel-footnote">{speakers.footnote}</p>}
       </div>
     </section>
   )
