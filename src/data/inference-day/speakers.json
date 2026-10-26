@@ -23,10 +23,12 @@
     { "id": "kashif-nizam-khan", "name": "Kashif Nizam Khan", "role": "Principal Open Source Architect, Ericsson", "project": "Metal3 Maintainer and CNCF TAG Infrastructure Co-Chair", "photo": "/inference-day/speakers/kashif.jpg" },
     { "id": "shivay-lamba", "name": "Shivay Lamba", "role": "Senior ML Engineer, Qualcomm", "project": "TensorFlow.js SIG member, Kubeflow and cloud native AI contributor", "photo": "/inference-day/speakers/shivay.jpg" },
     { "id": "filippe-spolti", "name": "Filippe Spolti", "role": "Senior Software Engineer, Red Hat", "project": "KServe Maintainer", "photo": "/inference-day/speakers/filippe.jpg" },
-    { "id": "julia-furst-morgado", "name": "Julia Furst Morgado", "role": "Principal Developer Relations Engineer, Dash0", "project": "OpenTelemetry project Community Manager", "photo": "/inference-day/speakers/julia.jpg" },
-    { "id": "dennis-ramdass", "name": "Dennis Ramdass", "role": "Principal AI Engineer, Upbound", "project": "Modelplane Maintainer", "photo": "/inference-day/speakers/dennis.jpg" },
+    { "id": "julia-furst-morgado", "name": "Julia Furst Morgado", "role": "Principal Developer Relations Engineer, Dash0", "project": "OpenTelemetry project Community Manager, Google Women Techmakers Ambassador", "photo": "/inference-day/speakers/julia.jpg" },
+    { "id": "karan-nisar", "name": "Karan Nisar", "role": "Staff Account Solutions Architect, CoreWeave", "project": "Enterprise AI", "photo": "/inference-day/speakers/karan.jpg" },
+    { "id": "nina-polshakova", "name": "Nina Polshakova", "role": "Member of Technical Staff, Stealth", "project": "Cloud Native AI Working Group & Kubernetes v1.33 Release Lead", "photo": "/inference-day/speakers/nina.jpg" },
     { "id": "nic-cope", "name": "Nic Cope", "role": "Senior Principal Engineer, Upbound", "project": "Modelplane & Crossplane Maintainer", "photo": "/inference-day/speakers/nic.jpg" },
-    { "id": "annie-talvasto", "name": "Annie Talvasto", "role": "Sr. Manager, Upbound", "project": "CNCF Ambassador", "photo": "/inference-day/speakers/annie.jpg" }
+    { "id": "dennis-ramdass", "name": "Dennis Ramdass", "role": "Principal AI Engineer, Upbound", "project": "Modelplane Maintainer", "photo": "/inference-day/speakers/dennis.jpg" },
+    { "id": "annie-talvasto", "name": "Annie Talvasto", "tag": "Event Host", "role": "Senior Manager, Upbound", "project": "CNCF Ambassador", "photo": "/inference-day/speakers/annie.jpg" }
   ],
-  "footnote": "More speakers to be announced."
+  "footnote": ""
 }

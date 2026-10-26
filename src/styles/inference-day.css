@@ -439,6 +439,16 @@ body:has(.id-page) { background: #001C2E; }
   aspect-ratio: 1;
   border-radius: var(--id-radius-card);
 }
+/* Optional role tag (e.g. "Event Host") above a panelist's name. Kept small and
+   understated so it reads as a quiet marker, not a callout. */
+.id-panel-tag {
+  font: 400 11px/1.3 var(--font-body);
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--id-cyan);
+  margin: 16px 0 0;
+}
+.id-panel-tag + .id-panel-name { margin-top: 4px; }
 .id-panel-name {
   font-family: var(--font-display);
   font-weight: 500;
