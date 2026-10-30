@@ -1,4 +1,4 @@
-import type { MDXRemoteProps } from 'next-mdx-remote'
+import type { MDXComponents } from 'mdx/types'
 import Video from './Video'
 import YouTube from './YouTube'
 import Embed from './Embed'
@@ -17,7 +17,7 @@ function A({ href = '', children, ...rest }: React.AnchorHTMLAttributes<HTMLAnch
 
 // The complete allowlist of components available inside MDX posts. Anything not
 // listed here (and not a standard HTML tag) fails the build, keeping PR review safe.
-export const mdxComponents: MDXRemoteProps['components'] = {
+export const mdxComponents: MDXComponents = {
   Video,
   YouTube,
   Embed,
