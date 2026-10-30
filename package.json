@@ -11,13 +11,13 @@
     "capture-gif": "node scripts/capture-gif.mjs"
   },
   "dependencies": {
+    "@mdx-js/mdx": "^3.1.1",
     "@vercel/analytics": "^2.0.1",
     "@vercel/og": "^1.0.0",
     "@vercel/speed-insights": "^2.0.0",
     "github-slugger": "^2.0.0",
     "gray-matter": "^4.0.3",
     "next": "^16.3.0",
-    "next-mdx-remote": "^6.0.0",
     "react": "^18",
     "react-dom": "^18",
     "reading-time": "^1.5.0",
@@ -29,6 +29,7 @@
     "shiki": "^4.2.0"
   },
   "devDependencies": {
+    "@types/mdx": "^2.0.14",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

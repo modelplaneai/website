@@ -1,7 +1,8 @@
+import { useMemo } from 'react'
+import * as runtime from 'react/jsx-runtime'
 import Link from 'next/link'
 import type { GetStaticPaths, GetStaticProps } from 'next'
-import { serialize } from 'next-mdx-remote/serialize'
-import { MDXRemote, type MDXRemoteSerializeResult } from 'next-mdx-remote'
+import { compile, runSync } from '@mdx-js/mdx'
 import remarkGfm from 'remark-gfm'
 import rehypePrettyCode from 'rehype-pretty-code'
 import rehypeSlug from 'rehype-slug'
@@ -29,7 +30,7 @@ import { SITE_URL, githubSourceUrl, ogCardUrl } from '@/lib/site'
 
 interface PostPageProps {
   meta: PostMeta
-  mdxSource: MDXRemoteSerializeResult
+  mdxCode: string
   toc: TocItem[]
   related: PostMeta[]
   sourceUrl: string
@@ -44,7 +45,7 @@ function ogImageFor(meta: PostMeta): string {
 
 export default function PostPage({
   meta,
-  mdxSource,
+  mdxCode,
   toc,
   related,
   sourceUrl,
@@ -53,6 +54,7 @@ export default function PostPage({
 }: PostPageProps) {
   const url = `${SITE_URL}/blog/${meta.slug}`
   const ogImage = ogImageFor(meta)
+  const Content = useMemo(() => runSync(mdxCode, runtime).default, [mdxCode])
 
   return (
     <>
@@ -111,7 +113,7 @@ export default function PostPage({
             <div className="post-main">
               <article className="post">
                 <div className="prose">
-                  <MDXRemote {...mdxSource} components={mdxComponents} />
+                  <Content components={mdxComponents} />
                 </div>
 
                 <div className="post-actions">
@@ -195,32 +197,31 @@ export const getStaticProps: GetStaticProps<PostPageProps> = async ({ params }) 
   const post = getPostBySlug(slug)
   if (!post) return { notFound: true }
 
-  const mdxSource = await serialize(post.content, {
-    mdxOptions: {
-      remarkPlugins: [remarkGfm],
-      rehypePlugins: [
-        // Lift standalone images out of their wrapping <p> so our <figure>/<figcaption>
-        // image renderer doesn't produce invalid <p><figure> nesting (a hydration error).
-        rehypeUnwrapImages,
-        rehypeSlug,
-        [
-          rehypeAutolinkHeadings,
-          {
-            behavior: 'append',
-            properties: { className: ['heading-anchor'], ariaHidden: true, tabIndex: -1 },
-            content: { type: 'text', value: '#' },
-          },
-        ],
-        [
-          rehypePrettyCode,
-          {
-            theme: 'github-dark',
-            // Let our CSS own the background so code blocks match the deep-space theme.
-            keepBackground: false,
-          },
-        ],
+  const mdxCode = await compile(post.content, {
+    outputFormat: 'function-body',
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [
+      // Lift standalone images out of their wrapping <p> so our <figure>/<figcaption>
+      // image renderer doesn't produce invalid <p><figure> nesting (a hydration error).
+      rehypeUnwrapImages,
+      rehypeSlug,
+      [
+        rehypeAutolinkHeadings,
+        {
+          behavior: 'append',
+          properties: { className: ['heading-anchor'], ariaHidden: true, tabIndex: -1 },
+          content: { type: 'text', value: '#' },
+        },
       ],
-    },
+      [
+        rehypePrettyCode,
+        {
+          theme: 'github-dark',
+          // Let our CSS own the background so code blocks match the deep-space theme.
+          keepBackground: false,
+        },
+      ],
+    ],
   })
 
   // Compute prev/next within the visible, date-sorted set (newest first).
@@ -234,7 +235,7 @@ export const getStaticProps: GetStaticProps<PostPageProps> = async ({ params }) 
   return {
     props: {
       meta: post.meta,
-      mdxSource,
+      mdxCode: String(mdxCode),
       toc: extractToc(post.content),
       related: getRelatedPosts(slug, 3),
       sourceUrl: folder ? githubSourceUrl(folder) : SITE_URL,
