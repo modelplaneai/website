@@ -1,0 +1,297 @@
+---
+title: "Modelplane v0.6: making the most of your hardware"
+description: "Modelplane v0.6 wastes fewer of your GPUs and serves from AMD GPUs and CPUs too."
+date: "2026-11-02"
+authors:
+  - name: "Nic Cope"
+    title: "Sr Principal Engineer, Upbound"
+    url: "https://github.com/negz"
+    avatar: "/authors/nic.jpg"
+    github: "https://github.com/negz"
+    linkedin: "https://www.linkedin.com/in/ncope/"
+    bio: "Nic is a Senior Principal Engineer at Upbound and a core maintainer of Modelplane and Crossplane. He's spent the last 15+ years working on cloud and infrastructure, including designing and building Crossplane from v0.1 through v2.0, and is now bringing that work to AI inference with Modelplane."
+tags: ["release", "inference", "control-plane", "scheduling"]
+cover: "/blog/modelplane-v0-6/cover.png"
+draft: false
+pinned: true
+---
+
+Modelplane v0.6 is out. Most of what's new helps you get more from the hardware
+you already have. Small models can now share a GPU node rather than each taking
+a whole one, and a fleet can serve from AMD Instinct GPUs and CPUs as well as
+NVIDIA GPUs. GKE and EKS node pools can also use capacity you've reserved.
+Separately, disaggregated prefill/decode serving now works with SGLang.
+
+## Small models share a node
+
+Modelplane's fleet scheduler picks a cluster and a node pool for each model
+replica. It used to measure a pool's room in whole nodes, so every pod that
+claimed a GPU took a node to itself, however many of the node's GPUs it used.
+Qwen3-8B fits on one NVIDIA L4. A pool of two nodes with four L4s each has room
+for eight replicas of it, but the scheduler would place only two.
+
+The scheduler now counts free GPUs instead, using an agent Modelplane installs
+on every cluster. The `InferenceCluster` publishes the agent's counts in its
+status. This pool has one node with one L4 free, and room to grow by two more
+nodes:
+
+```yaml
+status:
+  schedulablePools:
+  - name: gpu-l4x4-a
+    nodes: 3          # The most nodes the pool can have.
+    observedNodes: 1  # The nodes the pool has now, ready or not.
+    nodesByFreeDevices:
+    - freeDevices:
+        gpu.nvidia.com: 1
+      nodes: 1
+    devices:
+    - name: gpu
+      claim: DRA
+      driver: gpu.nvidia.com
+      deviceClassName: gpu.nvidia.com
+      count: 4
+```
+
+With these counts, four one-GPU replicas can share a four-GPU node, and a
+replica with two four-GPU engines fits on one eight-GPU node. The fleet
+scheduler still only picks the pool. Each cluster's own scheduler decides which
+node a pod runs on.
+
+There's nothing to configure.
+
+## AMD GPUs and CPUs
+
+A fleet can now serve from AMD Instinct GPUs and from CPUs as well as NVIDIA
+GPUs. Describe a pool's devices in its `InferenceClass` and Modelplane installs
+the software to drive them wherever they're needed. Here's the class from the
+AMD recipe, which describes a pool of MI325X nodes:
+
+```yaml
+apiVersion: modelplane.ai/v1alpha1
+kind: InferenceClass
+metadata:
+  name: amd-mi325x-8x
+spec:
+  description: "BYO 8x AMD Instinct MI325X 256GB"
+  devices:
+  - name: gpu
+    claim: DRA
+    driver: gpu.amd.com
+    deviceClassName: gpu.amd.com
+    count: 8
+    attributes:
+      productName: { string: AMD_Instinct_MI325_OAM }
+    capacity:
+      memory: { value: "262128Mi" }
+```
+
+A `ModelDeployment` asks for devices the way a Kubernetes
+[DRA](https://kubernetes.io/docs/concepts/resource-management/dynamic-resource-allocation/)
+claim does, with CEL expressions over the attributes and capacity a class
+publishes. Nothing in that is specific to NVIDIA, so one fleet can serve from
+both vendors. This deployment from the same recipe selects one AMD GPU with at
+least 200Gi of memory:
+
+```yaml
+apiVersion: modelplane.ai/v1alpha1
+kind: ModelDeployment
+metadata:
+  name: qwen-demo
+  namespace: ml-team
+spec:
+  replicas: 1
+  template:
+    spec:
+      engines:
+      - name: qwen
+        members:
+        - role: Standalone
+          nodeSelector:
+            devices:
+            - name: gpu
+              count: 1
+              selectors:
+              - cel: |
+                  device.capacity["gpu.amd.com"].memory.compareTo(quantity("200Gi")) >= 0
+          template:
+            spec:
+              containers:
+              - name: engine
+                image: rocm/vllm:rocm7.14.1_cdna_ubuntu24.04_py3.14_pytorch_2.11_vllm_0.23.0
+                command: ["vllm", "serve", "Qwen/Qwen2.5-0.5B-Instruct"]
+                args:
+                - --served-model-name=$(MODELPLANE_SERVED_MODEL_NAME)
+```
+
+AMD GPUs report metrics under the same names as NVIDIA's.
+
+A CPU pool is the cheapest way to try Modelplane end to end, since there's no
+GPU to find. Leave the accelerator out of an `InferenceClass` and it describes
+a CPU pool. The [CPU recipe](https://docs.modelplane.ai/recipes/qwen2.5-0.5b-cpu/)
+serves Qwen2.5-0.5B this way on Civo, using vLLM's CPU image.
+
+## Prefill/decode with SGLang
+
+Disaggregated serving splits a model across a prefill engine, which reads the
+prompt to build the KV cache, and a decode engine, which generates tokens from
+that cache. A router in front of them sends each request through both. On
+Modelplane that's [llm-d](https://github.com/llm-d/llm-d-router)'s endpoint
+picker, plus a sidecar in each decode pod.
+
+The router's configuration has to match the engines. Modelplane used to
+configure it for you, but only for vLLM, which left SGLang with a router it
+couldn't use.
+
+In v0.6 you write a `PrefillDecode` deployment's router the same way you write
+its engines, choosing the endpoint picker's image, flags, and configuration and
+adding the sidecar to the decode pod. Modelplane runs the picker and wires it
+into the cluster's gateway. Serving a new engine or KV transfer method no
+longer waits on a Modelplane release, only on a router that supports it.
+`Unified` deployments don't need any of this. They keep Modelplane's default
+picker unless they set their own.
+
+Here's an SGLang deployment, trimmed from the
+[routing docs](https://docs.modelplane.ai/models/routing/):
+
+```yaml
+apiVersion: modelplane.ai/v1alpha1
+kind: ModelDeployment
+metadata:
+  name: laguna-pd
+  namespace: ml-team
+spec:
+  replicas: 1
+  template:
+    spec:
+      modelCacheRef:
+        name: laguna
+      serving:
+        mode: PrefillDecode
+        router: EndpointPicker
+        endpointPicker:
+          template:
+            spec:
+              containers:
+              - name: epp
+                image: ghcr.io/llm-d/llm-d-router-endpoint-picker:v0.9.0
+                # Omitted for brevity.
+          config:
+            apiVersion: llm-d.ai/v1alpha1
+            kind: EndpointPickerConfig
+            plugins:
+            # SGLang's decode engine can't serve a request alone, so every
+            # request goes through prefill.
+            - type: always-disagg-pd-decider
+            # Omitted for brevity.
+      engines:
+      - name: prefill
+        phase: Prefill
+        # Omitted for brevity.
+      - name: decode
+        phase: Decode
+        members:
+        - role: Standalone
+          # nodeSelector omitted for brevity.
+          template:
+            metadata:
+              labels:
+                llm-d.ai/engine-type: sglang
+            spec:
+              containers:
+              - name: sidecar
+                image: ghcr.io/llm-d/llm-d-router-disagg-sidecar:v0.9.0
+                args:
+                - --secure-proxy=false
+                - --kv-connector=sglang
+                - --vllm-port=8001  # The decode engine's port, whatever the engine.
+                ports:
+                - containerPort: 8000
+                # readinessProbe omitted for brevity.
+              - name: engine
+                image: lmsysorg/sglang:v0.5.12.post1-cu129
+                command: ["python3", "-m", "sglang.launch_server"]
+                args:
+                - --model-path=poolside/Laguna-S-2.1-FP8
+                - --served-model-name=$(MODELPLANE_SERVED_MODEL_NAME)
+                - --tp-size=8
+                - --port=8001
+                - --disaggregation-mode=decode
+                - --disaggregation-transfer-backend=nixl
+                # Omitted for brevity.
+                ports:
+                - name: http
+                  containerPort: 8001
+```
+
+## Reserved capacity
+
+The largest GPU machines can be hard to get without a reservation. GKE node
+pools can now use a Compute Engine reservation you've already bought. EKS pools,
+which could already use a Capacity Block, can now use an On-Demand Capacity
+Reservation too. Register the reservation as a `CapacityReservation` and
+reference it from the pool:
+
+```yaml
+apiVersion: modelplane.ai/v1alpha1
+kind: CapacityReservation
+metadata:
+  name: l4-reservation
+spec:
+  provider: GKE
+  gke:
+    zone: us-central1-a
+    name: l4-reservation
+---
+apiVersion: modelplane.ai/v1alpha1
+kind: InferenceCluster
+metadata:
+  name: gke-reserved
+spec:
+  cluster:
+    source: GKE
+    gke:
+      region: us-central1
+  nodePools:
+  - name: l4-pool
+    className: gke-l4-1x-g2
+    nodeCount: 2
+    maxNodeCount: 2
+    zones: [us-central1-a]
+    reservationRef:
+      name: l4-reservation
+```
+
+A pool that references a reservation gets nodes only from it, never from
+on-demand capacity.
+
+## Degraded replicas keep serving
+
+An engine can run several `copies` within a replica. A replica used to take
+traffic only while every copy of every engine was ready, so one crashed copy
+withdrew the whole replica and took a one-replica deployment offline until the
+copy came back. Now a replica keeps serving as long as one copy of each engine
+is ready, and the endpoint picker sends requests only to the copies that are
+up.
+
+Ready still means full capacity. In `kubectl get`, a new `SERVING` column shows
+a degraded deployment as serving even though it isn't ready.
+
+## GPU metrics on Nebius
+
+Modelplane now installs NVIDIA's DCGM exporter on Nebius clusters. Their GPU
+metrics show up under Modelplane's `modelplane_gpu_*` names, where before
+there were none.
+
+## Try it
+
+The full release notes are on
+[GitHub](https://github.com/modelplaneai/modelplane/releases/tag/v0.6.0). The
+[getting-started guide](https://docs.modelplane.ai/getting-started/) covers
+standing up a fleet. If you're a platform engineer new to inference, Annie
+Talvasto's [field guide to inference
+engineering](https://docs.modelplane.ai/guides/inference-guide/) covers the
+concepts, production operations, and tooling you'll meet. Modelplane is Apache
+2.0 and moving fast at
+[github.com/modelplaneai/modelplane](https://github.com/modelplaneai/modelplane).
+Questions are welcome in [Slack](https://slack.modelplane.ai).
