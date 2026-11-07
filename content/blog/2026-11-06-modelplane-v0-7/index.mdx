@@ -1,6 +1,6 @@
 ---
-title: "Modelplane v0.7: CoreWeave, and a lot of hardening"
-description: "Modelplane v0.7 provisions inference clusters on CoreWeave, and fixes the rough edges we found running real fleets ahead of KubeCon."
+title: "Modelplane v0.7: CoreWeave, and a steadier fleet"
+description: "Modelplane v0.7 provisions inference clusters on CoreWeave, and smooths out rollouts, node drains, and new gateways across the fleet."
 date: "2026-11-06"
 authors:
   - name: "Nic Cope"
@@ -15,17 +15,22 @@ draft: true
 pinned: true
 ---
 
-Modelplane v0.7 is out, and it adds CoreWeave. A fleet can now provision
-CoreWeave Kubernetes Service (CKS) clusters alongside the other clouds
-Modelplane supports. With KubeCon in Salt Lake City next week, we spent the rest
-of the release fixing rough edges we found running real fleets.
+Modelplane v0.7 is out, and it brings CoreWeave into the fleet. A platform team
+can now provision CoreWeave Kubernetes Service (CKS) clusters right alongside
+EKS, AKS, GKE, and the other neoclouds Modelplane supports. AMD GPU pools also
+share nodes between small models now, as NVIDIA pools have since v0.6.
+
+With KubeCon in Salt Lake City next week, we spent the rest of the release
+running real fleets and smoothing out what we found. Rollouts finish on a full
+GPU pool, a model's endpoint picker stays up through a node drain, and GPU metrics tell
+you which deployment is using each GPU.
 
 ## CoreWeave
 
 Set an `InferenceCluster`'s source to `CoreWeave` and Modelplane provisions a
 CKS cluster with its VPC, a system node pool, and the GPU node pools you list,
-then installs the serving stack. Here's the platform from the
-getting-started guide, one node of eight NVIDIA RTX PRO 6000 Blackwell GPUs:
+then installs the serving stack. Here's one node of eight NVIDIA RTX PRO 6000
+Blackwell GPUs, from the getting-started guide:
 
 ```yaml
 apiVersion: modelplane.ai/v1alpha1
@@ -73,113 +78,82 @@ spec:
     maxNodeCount: 1
 ```
 
-The `ModelDeployment` an ML team writes doesn't change. Any deployment whose
-devices a CoreWeave pool satisfies can now run on it.
+The ML team doesn't change a thing. A `ModelDeployment` that runs on EKS or
+Nebius runs on CoreWeave too, on any pool whose devices match its selectors.
 
-Thanks to CoreWeave for the GPU capacity we built and tested this on. We found
-two bugs in VPC management while testing.
-
-Deleting a VPC right after the cluster using it could report success and leave
-the VPC behind, because CoreWeave's API answered `NotFound` for a VPC it
-wouldn't yet delete
+Thanks to CoreWeave for the GPU capacity we built and tested this on. Bringing
+up a new cloud always shakes out a few bugs, and working through them with
+CoreWeave's engineers has been a lot of fun. Their networking team is tracking
+one where deleting a VPC right after its cluster can leave the VPC behind
 ([provider-upjet-coreweave#4](https://github.com/upbound/provider-upjet-coreweave/issues/4)).
-CoreWeave's networking team says they've fixed it in their zonal API.
-
-CoreWeave's Crossplane provider also updated a VPC with no ingress or egress
-settings about twice a second, for as long as the VPC existed. CoreWeave spotted
-the load on their side and asked us about it
+They also spotted our provider updating some VPCs in a tight loop and asked us
+about it
 ([provider-upjet-coreweave#6](https://github.com/upbound/provider-upjet-coreweave/issues/6)).
-The fix is in review at
+We've sent them a fix in
 [terraform-provider-coreweave#554](https://github.com/coreweave/terraform-provider-coreweave/pull/554).
 
-## Safer rollouts
+## Rollouts that finish on a full pool
 
-An engine's Deployment started a new pod before stopping an old one. On a pool
-with no free GPU, the new pod waited for a GPU the old pod would never release.
-Modelplane now stops one copy and starts its replacement on the freed GPU, as
-LeaderWorkerSet and Grove already did. An engine with several copies keeps
-serving with one fewer, but a one-copy engine stops serving while its new pod
-starts.
+GPUs are expensive, so pools tend to run full. That used to make rolling out a
+new engine version awkward. An engine's Deployment started a new pod before
+stopping an old one, and on a pool with no free GPU the new pod waited for a GPU
+the old pod would never release. Modelplane now replaces one copy at a time, on
+the GPU the old copy frees. LeaderWorkerSet and Grove gangs already worked this
+way.
 
-A deployment could also report ready partway through a rollout, because its old
-copies still counted as ready. It now reports ready only once every copy runs
-the current spec.
+A deployment also reports ready only once every copy runs the current spec,
+rather than partway through a rollout. Switching an engine from `Standalone` to
+a `Leader` and `Worker` gang cleans up the old Deployment too, so it doesn't
+hold on to the GPUs its replacement needs.
 
-Changing an engine from `Standalone` to a `Leader` and `Worker` gang left the
-old Deployment running, holding the GPUs its replacement needed. Modelplane now
-deletes it.
+## Serving through node drains
 
-## Routing during node drains
+Draining a node used to take a model offline for minutes. Each replica's
+endpoint picker, which chooses the engine copy that serves each request, ran as
+one pod, and the cluster's gateway won't route without it. On Nebius a
+replacement picker took about four minutes to start. Modelplane now runs two
+pickers per replica, spread across nodes, with a disruption budget that keeps a
+drain from evicting both.
 
-Each model replica's endpoint picker, which chooses the engine copy that serves
-each request, ran as one pod. The cluster's gateway fails closed without it, so
-draining the picker's node took the model offline until a new picker started. In
-one case on Nebius that took about four minutes. Modelplane now runs two pickers
-per replica, spread across nodes where there's room, with a disruption budget so
-a drain never evicts both. The cost is fewer prefix-cache hits on replicas with
-several engine copies.
+New gateways are safer to route to, too. The first `ModelRoute` on a new
+`InferenceGateway` could report ready while Envoy AI Gateway was still rolling
+the gateway, so requests to it returned HTTP 500s. A gateway now waits for that
+rollout before it reports ready. It also keeps a placeholder route attached, so
+the first real route doesn't trigger another rollout.
 
-The first `ModelRoute` on a new `InferenceGateway` could report ready while
-Envoy AI Gateway was still rolling the gateway, and return HTTP 500s. The
-gateway now keeps a placeholder route attached so it doesn't roll, and waits for
-any rollout before it reports ready.
+## Which deployment is using that GPU?
 
-## Cluster fixes
+GPU metrics have the same `deployment`, `replica`, `role`, and `engine` labels
+as engine metrics. A dashboard can break GPU utilisation down by deployment and
+show it next to that deployment's queue depth and latency.
 
-The rest of the fixes are mostly specific to one cloud:
+Inference clusters are lighter too. Modelplane's telemetry collector scrapes
+engines and GPUs itself, which means clusters don't need a Prometheus stack of
+their own anymore.
 
-- **GKE taints.** GKE only taints a GPU pool added to a cluster that already
-  has a non-GPU pool, so system pods could schedule onto GPU nodes. Modelplane
-  now taints GPU pools itself.
-- **EKS system pool.** The LeaderWorkerSet controller and nodewright requested a
-  full CPU core each, far more than they use. That left an NVSentinel pod
-  unschedulable on the default system pool. They now request a quarter and half
-  a core.
-- **Vultr clusters.** VKE was out of stock of the system pool's plan, so every
-  Vultr cluster failed to create. Modelplane now uses another plan.
-- **Long names.** An `InferenceCluster` name of 41 characters or more pushed
-  Helm release names past Helm's limit.
-- **AMD GPU pools.** The scheduler counted these in whole nodes, so a one-GPU
-  replica took a whole AMD node. They now share nodes the way NVIDIA pools have
-  since v0.6.
-
-Inference clusters no longer run a Prometheus stack, since Modelplane's
-telemetry collector scrapes engines and GPUs itself. GPU metrics now have the
-`deployment`, `replica`, `role`, and `engine` labels engine metrics do, so you
-can see which deployment uses which GPU. That works on EKS, AKS, Civo, Nebius,
-and CoreWeave.
-
-## Docs and recipes
+## Try it on your laptop
 
 The new [local demo](https://docs.modelplane.ai/getting-started/local-demo/)
 runs Modelplane on two kind clusters on your laptop, with fake GPUs and models
-small enough for a CPU.
+small enough for a CPU. You play both teams, building a small fleet and then
+upgrading a model behind the same name.
 
-The [getting-started guide](https://docs.modelplane.ai/getting-started/) now
-covers Vultr and Civo end to end, and a new
+When you're ready for real GPUs, the
+[getting-started guide](https://docs.modelplane.ai/getting-started/) covers
+Vultr and Civo end to end, and a new
 [recipe](https://docs.modelplane.ai/recipes/kimi-k3.1-pro/) serves Moonshot AI's
 Kimi K3.1 Pro with SGLang on one 8x B300 node.
 
-Modelplane also has a
-[charter](https://github.com/modelplaneai/modelplane/blob/main/CHARTER.md),
-which states what's in the project's scope and what isn't, and a
-[governance](https://github.com/modelplaneai/modelplane/blob/main/GOVERNANCE.md)
-model adapted from Crossplane's.
-
-## Upgrading
-
-Modelplane doesn't keep migration paths before v1.0, so upgrading to v0.7 has
-side effects. It recreates every engine workload once. Each replica stops
-serving until its new pods are ready. It replaces each `InferenceGateway`'s
-Envoy Deployment, and removes the Prometheus stack from inference clusters. On
-clusters created before v0.7, it also installs a second copy of some cluster
-add-ons, like the cluster autoscaler, under new Helm release names.
-
-## Try it
+## Come find us at KubeCon
 
 The full release notes are on
 [GitHub](https://github.com/modelplaneai/modelplane/releases/tag/v0.7.0).
-Modelplane is Apache 2.0 and moving fast at
-[github.com/modelplaneai/modelplane](https://github.com/modelplaneai/modelplane).
-Questions are welcome in [Slack](https://slack.modelplane.ai), and if you're at
-KubeCon next week, come find us at the Upbound booth.
+Modelplane is Apache 2.0 at
+[github.com/modelplaneai/modelplane](https://github.com/modelplaneai/modelplane),
+and now has a
+[charter](https://github.com/modelplaneai/modelplane/blob/main/CHARTER.md)
+setting out the project's scope, plus a
+[governance](https://github.com/modelplaneai/modelplane/blob/main/GOVERNANCE.md)
+model adapted from Crossplane's. Questions are welcome in
+[Slack](https://slack.modelplane.ai). If you're at KubeCon next week, come find
+us at the Upbound booth.
