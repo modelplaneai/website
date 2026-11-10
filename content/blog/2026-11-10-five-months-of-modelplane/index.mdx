@@ -1,0 +1,182 @@
+---
+title: "Five Months of Modelplane: The Code, the Corks, and the Community"
+description: "Six releases, outside contributors, Inference Day, and Project Champagne — five months of building Modelplane in the open, and a CNCF Sandbox submission."
+date: "2026-11-10"
+authors:
+  - name: "Pablo Luna"
+    title: "VP of Product Management, Upbound"
+tags: ["community", "cncf", "inference", "control-plane"]
+cover: "/blog/five-months-of-modelplane/cover.png"
+draft: false
+pinned: true
+---
+
+We open sourced Modelplane on June 23. Less than five months later, we've shipped
+[six releases](https://github.com/modelplaneai/modelplane/releases), welcomed
+contributions from people outside the original team, started running our own
+engineers' coding agents and security workflows on the project, and brought the
+people building the inference stack together for Inference Day. This week, from
+the KubeCon keynote stage, Bassam shared another milestone: Upbound has submitted
+Modelplane to the CNCF for consideration as a Sandbox project.
+
+The submission matters, but what makes this moment worth celebrating is the work
+that led here. Models, serving engines, accelerators and infrastructure providers
+are evolving independently. Managing them together as one heterogeneous fleet is
+becoming a job of its own. We wanted to help build the control plane for that job,
+in the open, with the people who will actually use and extend it.
+
+The industry is moving horizontally for practical reasons, not because GPUs have
+become cheap or plentiful. Capacity is constrained, models have very different
+economics and capabilities, and the best choice for one workload may be completely
+wrong for another. Enterprises need to bring their existing cloud commitments,
+neocloud capacity and private infrastructure together without being locked into
+one model, engine or accelerator. A fleet-wide control plane can help make those
+choices usable. That was the idea behind Modelplane's first release, and it's
+shaped the work we've done since.
+
+The first release gave teams a way to provision or bring their own inference
+clusters, schedule model replicas onto compatible GPUs, cache model weights and
+serve requests through one OpenAI-compatible endpoint. It was an ambitious
+starting point, but it gave us something real to build on. In July, v0.2 added
+Azure AKS and Nebius support alongside weighted routing and controls for reserving
+or draining capacity. In August, v0.3 brought Vultr VKE, end-to-end support for
+the Anthropic Messages API, including coding-agent workflows, and local testing
+across two clusters without needing cloud infrastructure or a GPU.
+
+September's v0.4 grew out of collaboration with the NVIDIA team, adding a Dynamo
+serving stack with Grove, the KAI Scheduler and ModelExpress, as well as NVIDIA AI
+Cluster Runtime integration. October's v0.5 strengthened the day-to-day operating
+story with an AI gateway, regional gateway placement, fleet-wide telemetry,
+scale-to-zero and support for Civo. Then v0.6, released on October 30, tackled
+some particularly practical limits: scheduling on free GPUs rather than whole
+nodes so smaller models can share hardware, support for AMD Instinct and CPU
+serving, and more flexible SGLang prefill/decode configurations. None of these
+releases is the finish line; together, they show how quickly the project is
+beginning to accommodate a broader inference ecosystem.
+
+The work hasn't been confined to the original maintainers. The release notes have
+welcomed first-time contributors, including [@adamwg](https://github.com/adamwg)
+and [@ytsarev](https://github.com/ytsarev) earlier in the project and
+[@RedbackThomson](https://github.com/RedbackThomson) and
+[@jbw976](https://github.com/jbw976) in v0.6. Their changes range from making
+development and documentation more approachable to improving the underlying
+platform. Those contributions matter because an open control plane only becomes
+useful to a wider ecosystem when people outside the original design conversation
+can shape it.
+
+On November 5, we hosted [Inference Day](https://modelplane.ai/inference-day) to
+bring the people building the inference stack into one conversation. Kelsey
+Hightower opened with a fireside chat about what platform teams should build
+now—and what lessons from cloud native are worth carrying forward. The serving
+panel brought maintainers from NVIDIA Dynamo, KServe, Envoy AI Gateway and
+Modelplane together around the path from a request to a running engine. Another
+connected Kubernetes, Metal3, Crossplane and Modelplane contributors around the
+infrastructure underneath models, from clouds to bare metal. A third focused on
+the practical work of operating inference: observability, cost and reliability.
+Viktor Farcic closed with Inference 101.
+
+That lineup made the horizontal ecosystem story real. No one project can or should
+own every layer, and platform engineers need to understand how the pieces
+interact. We also published
+[An Open Field Guide to Inference Engineering](https://docs.modelplane.ai/guides/inference-guide/),
+drawing on the work of the wider community and our own experiments. It walks
+through the familiar skills—scheduling, capacity, load balancing and incident
+response—and what changes when the workload is inference.
+
+## Champagne: what happened when we became our own users
+
+One of the most important things we did was admit an uncomfortable truth: we were
+building technology for self-hosted inference, but we weren't depending on it
+ourselves. Project Champagne changed that. We put internal chat, coding agents and
+a build-security agent onto models served through Modelplane and asked our
+engineers to use them for real work. We also made a rule: don't hide an issue in a
+private fork. Work around it temporarily if necessary, but file it, fix it upstream
+and write down what happened.
+
+That decision exposed problems before we even got to model quality. An approved GPU
+quota didn't mean the instance was available; our first-choice H100 shape never
+launched, and another GPU shape was unavailable in several zones. A response could
+return HTTP 200 after being silently truncated. A long-running agent could outlive
+the credentials or timeouts set up for an ordinary request. We learned that the
+environment around a model mattered at least as much as the model itself.
+
+![One fleet control plane — provisioning, scheduling, autoscaling, caching and routing — over TPU, NVIDIA and AMD accelerators across clouds and providers.](/blog/five-months-of-modelplane/heterogeneous-fleet.png)
+
+That experience has reinforced why we've focused on operating a heterogeneous fleet
+rather than one ideal cluster. At KubeCon + CloudNativeCon North America, Bassam
+demonstrated the same idea from another angle: the same model running on NVIDIA
+GPUs in AWS and AMD GPUs on Vultr, with different serving engines behind one
+endpoint. The infrastructure and serving technology could change while the
+application-facing interface stayed consistent. It's a demonstration of the
+fleet-wide operating model we're building—and the kind of flexibility that matters
+when available capacity and workload needs keep changing.
+
+![The KubeCon demo: one model served from NVIDIA GPUs on AWS and AMD GPUs on Vultr, with vLLM and SGLang behind a single endpoint.](/blog/five-months-of-modelplane/serve-two-deployments.png)
+
+The most revealing failure looked exactly like a bad model. For roughly two weeks,
+a coding model mangled tool names, omitted fields and produced nonsense that made
+our engineers question whether open models were ready. Then we asked it to copy
+back 50 names. With vLLM it succeeded 30% of the time; with SGLang, using the same
+weights on the same GPUs, it succeeded 100%. We hadn't changed the intelligence.
+We'd changed the software serving it.
+
+The build-security agent taught us a different kind of caution. Open models could
+find known CVEs, but a convincing-looking fix plan could still recommend the wrong
+patched version. In other cases the evaluation harness, a timeout or the grader—not
+the model—explained a disappointing score. If we were going to use self-hosted
+inference for real work, we needed to test the whole system rather than infer
+quality from a single answer.
+
+And getting a useful pilot wasn't the same as serving a team. About ten engineers
+were trying a self-hosted coding model. We tested seven serving recipes to
+understand what it would take to support fifteen, changing one variable at a time.
+Two GPU nodes couldn't meet the test; four nodes using SGLang could, at roughly
+what we were already paying per engineer. One surprise: supposedly light users
+could generate more concurrent requests than heavy users because their agents
+spawned subagents.
+
+These lessons have guided very practical upstream fixes: gateway TLS and API keys,
+configurable request and idle timeouts, OpenTelemetry collection, scale-to-zero and
+more useful serving metrics. Not every issue is solved, and we've been explicit
+about the ones still open. We published the complete six-part Champagne series
+because our own code isn't the only thing that should improve. Other engineers
+should be able to inspect the experiments, question the results and avoid repeating
+our mistakes.
+
+That's why the CNCF submission feels like a continuation of the work, not a separate
+announcement. We've learned from contributors, integration partners, the people who
+came to Inference Day and engineers willing to use an unfinished system in their
+daily work. The values behind Champagne—use what you build, share the failures and
+bring the fixes back—are the same ones we want to carry into a broader community.
+Modelplane is still Apache 2.0 licensed and still early. We've submitted it for
+consideration as a CNCF Sandbox project; acceptance has not yet been decided. A
+neutral home would give people building models, engines, accelerators and
+infrastructure a stronger place to shape a common fleet-wide control plane together.
+
+## Join us for what's next
+
+We're proud of the six releases, new infrastructure and serving integrations, and
+contributions from outside the original team. We're equally proud of the untidy
+parts: GPU requests that failed, serving configurations that lost, broken tool
+calls and experiments that changed our minds. They're the parts worth sharing
+because they make a young project more useful. If you're building any part of the
+inference stack—or suddenly finding yourself responsible for operating it—we'd love
+to compare notes, learn from what you've seen and build the next part together.
+
+The six-part Champagne series tells the longer engineering story, including the
+things that didn't fit into a keynote demo:
+
+- **Part 1 — [What It Takes to Own Your Intelligence](https://www.upbound.io/blog/drinking-our-own-champagne-what-it-takes-to-own-your-intelligence):** why we moved our own workloads.
+- **Part 2 — [Finding the Corks](https://www.upbound.io/blog/drinking-our-own-champagne-part-2-finding-the-corks):** capacity, gateways, authentication and the failures that looked healthy.
+- **Part 3 — [The Build Security Agent](https://www.upbound.io/blog/drinking-our-own-champagne-part-3-use-case-1-the-build-security-agent):** evaluating self-hosted models against a real CVE workflow and learning when to distrust the grader.
+- **Part 4 — [Candling the Bottles](https://www.upbound.io/blog/drinking-our-own-champagne-part-4-candling-the-bottles):** building observability that exposes the failures status fields can hide.
+- **Part 5 — [Growing a Self-Hosted Coding Model From Pilot to Team](https://www.upbound.io/blog/drinking-our-own-champagne-part-5-what-does-it-take-to-grow-a-self-hosted-coding-model-from-pilot-to-team):** testing concurrency and the user experience before expanding adoption.
+- **Part 6 — [The Model Was Rarely the Problem](https://www.upbound.io/blog/drinking-our-own-champagne-part-6-the-model-was-rarely-the-problem):** the operational lessons and improvements flowing back into Modelplane.
+
+If you've hit a strange failure in your own inference setup, bring it to the
+community. The project is still young, and there's a lot more we can learn in
+public.
+
+Come find us on [GitHub](https://github.com/modelplaneai/modelplane), in the
+[community Slack](https://slack.modelplane.ai), and in the
+[documentation](https://docs.modelplane.ai).
